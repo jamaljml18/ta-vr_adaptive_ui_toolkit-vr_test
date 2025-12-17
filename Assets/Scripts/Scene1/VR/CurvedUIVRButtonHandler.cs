@@ -31,6 +31,9 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
     // [ID] Layer khusus Curved UI
     // [EN] Layer for Curved UI
 
+    [Header("Debug")]
+    [SerializeField] private GameObject cube;
+
     // Internal
     private GraphicRaycaster canvasRaycaster;
     private EventSystem eventSystem;
@@ -65,6 +68,13 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
             Debug.LogError("EventSystem tidak ditemukan di scene!");
         }
     }
+
+    private void Update()
+    {
+        Ray ray = new Ray(xrRay.transform.position, xrRay.transform.forward);
+        Debug.DrawRay(ray.origin, ray.direction * 10f, Color.green);
+    }
+
 
     // =====================================================
     // VR TRIGGER EVENT
@@ -123,6 +133,7 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
             {
                 btn.onClick.Invoke();
                 Debug.Log("Clicked UI Button: " + result.gameObject.name);
+                DebugWithCube();
                 break;
             }
 
@@ -134,5 +145,11 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
                 break;
             }
         }
+    }
+
+    private void DebugWithCube()
+    {
+        if (cube.gameObject.activeSelf == true) cube.gameObject.SetActive(false);
+        if (cube.gameObject.activeSelf == false) cube.gameObject.SetActive(true);
     }
 }

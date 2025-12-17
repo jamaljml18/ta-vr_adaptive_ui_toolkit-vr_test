@@ -45,6 +45,8 @@ public class UIFollowCamera : MonoBehaviour
                                                            // [EN] VR Input used to detect click/trigger events inside VR
     [SerializeField] private InputActionReference vrInput2; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
                                                             // [EN] VR Input used to detect click/trigger events inside VR
+    [SerializeField] private InputActionReference vrInput3; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
+                                                            // [EN] VR Input used to detect click/trigger events inside VR
 
     // [ID] Velocity digunakan untuk SmoothDamp
     // [EN] Velocity used internally by SmoothDamp
@@ -57,6 +59,8 @@ public class UIFollowCamera : MonoBehaviour
         if (vrInput != null)
             vrInput.action.started += OnVRPressed;
             vrInput2.action.started += OnVRPressed2;
+            vrInput3.action.started += OnVRPressed3;
+
     }
 
     private void OnDisable()
@@ -66,6 +70,8 @@ public class UIFollowCamera : MonoBehaviour
         if (vrInput != null)
             vrInput.action.started -= OnVRPressed;
             vrInput2.action.started -= OnVRPressed2;
+            vrInput3.action.started -= OnVRPressed3;
+
     }
 
     private void Start()
@@ -110,6 +116,17 @@ public class UIFollowCamera : MonoBehaviour
         HiddenUI();
     }
 
+    private void OnVRPressed3(InputAction.CallbackContext ctx)
+    {
+        // [ID] Dipanggil saat input VR utama (misalnya trigger) ditekan
+        // [EN] Called when the primary VR input (e.g., trigger) is pressed
+
+        Debug.Log("VR INPUT TRIGGERED! Find");
+
+        // [ID] Mengubah followX, followY, dan followZ
+        // [EN] Change followX, followY, and followZ
+        ChangeFollowXYZ();
+    }
     private void FindUI()
     {
         // [ID] Jika UI sedang mengikuti posisi kamera pada sumbu tertentu,
@@ -146,6 +163,13 @@ public class UIFollowCamera : MonoBehaviour
         {
             curvedMesh.gameObject.SetActive(false);
         }
+    }
+
+    private void ChangeFollowXYZ ()
+    {
+        followX = !followX;
+        followY = !followY;
+        followZ = !followZ;
     }
 
     private void LateUpdate()

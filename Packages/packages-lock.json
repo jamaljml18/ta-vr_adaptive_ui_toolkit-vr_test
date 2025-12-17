@@ -241,7 +241,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.picoxr": {
-      "version": "file:C:/Users/NITRO/Downloads/GameApp/Pico/PICO Unity Integration SDK-3.3.3-20251202",
+      "version": "file:C:/Users/NITRO/Downloads/GameApp/Pico/PICO Unity Integration SDK-3.0.5-20241105",
       "depth": 0,
       "source": "local",
       "dependencies": {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UIFollowCamera : MonoBehaviour
@@ -121,7 +122,7 @@ public class UIFollowCamera : MonoBehaviour
         // [ID] Dipanggil saat input VR utama (misalnya trigger) ditekan
         // [EN] Called when the primary VR input (e.g., trigger) is pressed
 
-        Debug.Log("VR INPUT TRIGGERED! Find");
+        Debug.Log("VR INPUT TRIGGERED! Change");
 
         // [ID] Mengubah followX, followY, dan followZ
         // [EN] Change followX, followY, and followZ
@@ -144,6 +145,21 @@ public class UIFollowCamera : MonoBehaviour
         {
             curvedMesh.gameObject.SetActive(true);
         }
+
+        followX = true;
+        followY = true;
+        followZ = true;
+        UpdatePosition(true);
+        StartCoroutine(BackToFrontCamera());
+    }
+
+    private IEnumerator BackToFrontCamera()
+    {
+        yield return new WaitForSeconds(.5f);
+        print("Follow X Y Z kembali false");
+        followX = false;
+        followY = false;
+        followZ = false;
     }
 
     private void HiddenUI()

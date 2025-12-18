@@ -120,186 +120,44 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // [ID] LOGIKA SIMULASI KLIK UI
-    // [EN] UI CLICK SIMULATION LOGIC
-    // ============================================================
-    //private void SimulateUIClick(Vector2 uvCoords)
-    //{
-    //    pointerEventData = new PointerEventData(eventSystem);
-
-    //    // [ID] Ambil kamera yang digunakan untuk me-render Canvas ini
-    //    // [EN] Get the camera used to render this Canvas
-    //    Camera uiCam = sourceCanvas.worldCamera;
-
-    //    if (uiCam != null)
-    //    {
-    //        // [ID] PENTING: Gunakan resolusi Pixel Kamera (Render Texture) untuk akurasi
-    //        // Ini memastikan klik jatuh di titik yang benar meskipun Canvas di-scale
-    //        // [EN] CRITICAL: Use Camera Pixel resolution (Render Texture) for accuracy
-    //        // This ensures the click lands correctly even if the Canvas is scaled
-    //        pointerEventData.position = new Vector2(
-    //            uvCoords.x * uiCam.pixelWidth,
-    //            uvCoords.y * uiCam.pixelHeight
-    //        );
-    //    }
-    //    else
-    //    {
-    //        // [ID] Fallback: Gunakan ukuran Rect Canvas jika kamera hilang (kurang akurat untuk Render Texture)
-    //        // [EN] Fallback: Use Canvas Rect size if camera is missing (less accurate for Render Texture)
-    //        RectTransform canvasRect = sourceCanvas.GetComponent<RectTransform>();
-    //        pointerEventData.position = new Vector2(
-    //            uvCoords.x * canvasRect.rect.width,
-    //            uvCoords.y * canvasRect.rect.height
-    //        );
-    //        Debug.LogWarning("[CurvedUIVR] Using Canvas Rect fallback. Assign Render Camera to Canvas for better accuracy.");
-    //    }
-
-    //    if (showDebugLogs)
-    //        Debug.Log($"[CurvedUIVR] Mapping UV {uvCoords} to Pixel Position: {pointerEventData.position}");
-
-    //    // [ID] Lakukan Raycast UI Virtual pada posisi pixel yang sudah dihitung
-    //    // [EN] Perform Virtual UI Raycast at the calculated pixel position
-    //    List<RaycastResult> results = new List<RaycastResult>();
-    //    canvasRaycaster.Raycast(pointerEventData, results);
-
-    //    // [ID] Loop hasil raycast untuk mencari tombol
-    //    // [EN] Loop through raycast results to find a button
-    //    foreach (RaycastResult result in results)
-    //    {
-    //        // [ID] Cek apakah objek memiliki komponen Button
-    //        // [EN] Check if object has a Button component
-    //        Button btn = result.gameObject.GetComponent<Button>();
-
-    //        if (btn != null)
-    //        {
-    //            // [ID] Visual feedback kedua: Menandakan tombol UI berhasil ditemukan dan diklik
-    //            // [EN] Second visual feedback: Indicates UI button was found and clicked
-    //            if (cubeDebug2 != null) cubeDebug2.SetActive(!cubeDebug2.activeSelf);
-
-    //            // [ID] Panggil fungsi OnClick tombol tersebut secara virtual
-    //            // [EN] Invoke the button's OnClick function virtually
-    //            btn.onClick.Invoke();
-
-    //            if (showDebugLogs) Debug.Log("[CurvedUIVR] BUTTON CLICKED: " + result.gameObject.name);
-
-    //            // [ID] Berhenti setelah menekan tombol teratas (agar tidak menembus ke tombol di belakangnya)
-    //            // [EN] Break after clicking the topmost button (to avoid clicking buttons behind it)
-    //            break;
-    //        }
-
-    //        // [ID] Catatan: Anda bisa menambahkan logika untuk Toggle, Slider, atau InputField di sini jika perlu
-    //        // [EN] Note: You can add logic for Toggles, Sliders, or InputFields here if needed
-    //    }
-    //}
-
-    //private void SimulateUIClick(Vector2 uvCoords)
-    //{
-    //    pointerEventData = new PointerEventData(eventSystem);
-
-    //    // [ID] Ambil kamera UI
-    //    Camera uiCam = sourceCanvas.worldCamera;
-
-    //    // [ID] Variabel untuk menampung ukuran target resolusi
-    //    float targetWidth = 0;
-    //    float targetHeight = 0;
-
-    //    // [ID] CARA LEBIH AKURAT: Cek apakah kamera merender ke Texture?
-    //    if (uiCam != null && uiCam.targetTexture != null)
-    //    {
-    //        // Gunakan resolusi Render Texture (1024x1024), bukan resolusi layar
-    //        targetWidth = uiCam.targetTexture.width;
-    //        targetHeight = uiCam.targetTexture.height;
-    //    }
-    //    else if (uiCam != null)
-    //    {
-    //        // Fallback ke pixel kamera biasa
-    //        targetWidth = uiCam.pixelWidth;
-    //        targetHeight = uiCam.pixelHeight;
-    //    }
-    //    else
-    //    {
-    //        // Fallback terakhir ke Rect Canvas
-    //        RectTransform canvasRect = sourceCanvas.GetComponent<RectTransform>();
-    //        targetWidth = canvasRect.rect.width;
-    //        targetHeight = canvasRect.rect.height;
-    //    }
-
-    //    // [ID] Hitung posisi pixel
-    //    pointerEventData.position = new Vector2(
-    //        uvCoords.x * targetWidth,
-    //        uvCoords.y * targetHeight
-    //    );
-
-    //    if (showDebugLogs)
-    //        Debug.Log($"[CurvedUIVR] UV: {uvCoords} | Mapped to Pixel: {pointerEventData.position} on Size: {targetWidth}x{targetHeight}");
-
-    //    // [ID] Raycast UI
-    //    List<RaycastResult> results = new List<RaycastResult>();
-    //    canvasRaycaster.Raycast(pointerEventData, results);
-
-    //    // [ID] Debugging khusus jika hasil kosong
-    //    if (results.Count == 0 && showDebugLogs)
-    //    {
-    //        Debug.LogWarning("[CurvedUIVR] Raycast UI results are EMPTY. Check Canvas Scaler or Camera Clipping Planes.");
-    //    }
-
-    //    foreach (RaycastResult result in results)
-    //    {
-    //        Button btn = result.gameObject.GetComponent<Button>();
-
-    //        // Tambahkan support untuk Toggle juga (opsional)
-    //        Toggle toggle = result.gameObject.GetComponent<Toggle>();
-
-    //        if (btn != null)
-    //        {
-    //            if (cubeDebug2 != null) cubeDebug2.SetActive(!cubeDebug2.activeSelf); // Visual Debug
-    //            btn.onClick.Invoke();
-    //            Debug.Log("[CurvedUIVR] BUTTON CLICKED: " + result.gameObject.name);
-    //            break;
-    //        }
-    //        else if (toggle != null)
-    //        {
-    //            if (cubeDebug2 != null) cubeDebug2.SetActive(!cubeDebug2.activeSelf);
-    //            toggle.isOn = !toggle.isOn; // Flip toggle
-    //            Debug.Log("[CurvedUIVR] TOGGLE CLICKED: " + result.gameObject.name);
-    //            break;
-    //        }
-    //    }
-    //}
-
     private void SimulateUIClick(Vector2 uvCoords)
     {
-        if (eventSystem == null || canvasRaycaster == null)
-            return;
+        if (eventSystem == null || canvasRaycaster == null) return;
 
         pointerEventData = new PointerEventData(eventSystem);
 
-        // 🔥 INI KUNCI UTAMA
-        pointerEventData.position = new Vector2(
-            uvCoords.x * Screen.width,
-            uvCoords.y * Screen.height
-        );
+        // ✅ PERBAIKAN WAJIB UNTUK VR RENDER TEXTURE
+        Camera uiCam = sourceCanvas.worldCamera;
 
-        if (showDebugLogs)
-            Debug.Log($"[CurvedUIVR] Screen Pos = {pointerEventData.position}");
+        if (uiCam != null)
+        {
+            // Gunakan resolusi kamera/texture (1024), BUKAN resolusi headset (2000+)
+            pointerEventData.position = new Vector2(
+                uvCoords.x * uiCam.pixelWidth,
+                uvCoords.y * uiCam.pixelHeight
+            );
+        }
+        else
+        {
+            // Fallback
+            RectTransform canvasRect = sourceCanvas.GetComponent<RectTransform>();
+            pointerEventData.position = new Vector2(
+               uvCoords.x * canvasRect.rect.width,
+               uvCoords.y * canvasRect.rect.height
+           );
+        }
 
+        // ... Lanjutkan raycast seperti biasa ...
         List<RaycastResult> results = new List<RaycastResult>();
         canvasRaycaster.Raycast(pointerEventData, results);
-
-        if (showDebugLogs)
-            Debug.Log($"[CurvedUIVR] UI Hit Count = {results.Count}");
 
         foreach (var result in results)
         {
             Button btn = result.gameObject.GetComponent<Button>();
             if (btn != null)
             {
-                if (cubeDebug2 != null)
-                    cubeDebug2.SetActive(!cubeDebug2.activeSelf);
-
+                if (cubeDebug2) cubeDebug2.SetActive(!cubeDebug2.activeSelf); // Debug visual
                 btn.onClick.Invoke();
-                Debug.Log("[CurvedUIVR] BUTTON CLICKED: " + result.gameObject.name);
                 break;
             }
         }

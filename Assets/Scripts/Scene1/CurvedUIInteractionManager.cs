@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class CurvedUIInteractionManager : MonoBehaviour
 {
+    [SerializeField] private GameObject cubeDebug;
     // --- BUTTONS ---
 
     public void ButtonA()
     {
+        cubeDebug.SetActive(!cubeDebug.activeSelf);
         // [ID] Mencetak pesan saat Button A ditekan
         // [EN] Prints a message when Button A is pressed
         print("Button A Pressed");
@@ -15,6 +17,7 @@ public class CurvedUIInteractionManager : MonoBehaviour
 
     public void ButtonB()
     {
+        cubeDebug.SetActive(!cubeDebug.activeSelf);
         // [ID] Mencetak pesan saat Button B ditekan
         // [EN] Prints a message when Button B is pressed
         print("Button B Pressed");

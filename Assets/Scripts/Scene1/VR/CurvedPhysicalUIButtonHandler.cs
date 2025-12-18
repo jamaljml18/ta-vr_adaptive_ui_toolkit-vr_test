@@ -1,30 +1,46 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem; // Wajib untuk Input Action
+using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
+/// <summary>
+/// [ID] Menangani interaksi VR tombol menggunakan pendekatan "Physical Proxy".
+/// Memetakan Collider 3D fisik ke Tombol UI Canvas secara manual.
+/// 
+/// [EN] Handles VR button interaction using the "Physical Proxy" approach.
+/// Maps physical 3D Colliders to Canvas UI Buttons manually.
+/// </summary>
 public class CurvedPhysicalUIButtonHandler : MonoBehaviour
 {
-    [Header("Mapping Config")]
-    [Tooltip("Masukkan Collider 3D yang Anda buat manual di sini")]
+    [Header("Mapping Configuration")]
+    [Tooltip("[ID] Daftar Collider 3D transparan yang dipasang di atas mesh UI.\n[EN] List of transparent 3D Colliders placed over the UI mesh.")]
     public Collider[] buttonBoxColliders;
 
-    [Tooltip("Masukkan Tombol UI Canvas sesuai urutan Collider di atas")]
+    [Tooltip("[ID] Daftar Button UI yang sesuai dengan urutan Collider di atas.\n[EN] List of UI Buttons corresponding to the order of Colliders above.")]
     public Button[] canvasButtons;
 
     [Header("VR Settings")]
-    [SerializeField] private XRRayInteractor leftRayInteractor;
-    // [SerializeField] private XRRayInteractor rightRayInteractor; // Jika ingin support 2 tangan
+    [Tooltip("[ID] Referensi ke Ray Interactor (biasanya di tangan kiri/kanan).\n[EN] Reference to the Ray Interactor (usually on left/right hand).")]
+    [SerializeField] private XRRayInteractor rayInteractor;
 
     [Header("Input Action")]
-    // Masukkan Reference: XRI LeftHand Interaction/Select (Tombol Trigger)
+    [Tooltip("[ID] Input Action untuk trigger/klik (contoh: XRI LeftHand Interaction/Select).\n[EN] Input Action for trigger/click (e.g., XRI LeftHand Interaction/Select).")]
     [SerializeField] private InputActionReference selectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
+
+    private void Start()
+    {
+        // [ID] Validasi: Pastikan jumlah collider dan tombol sama
+        // [EN] Validation: Ensure the count of colliders and buttons matches
+        if (buttonBoxColliders.Length != canvasButtons.Length)
+        {
+            Debug.LogError($"[PhysicalUI] Mismatch! Colliders: {buttonBoxColliders.Length}, Buttons: {canvasButtons.Length}. Please fix in Inspector.");
+        }
+    }
 
     private void OnEnable()
     {
@@ -39,66 +55,63 @@ public class CurvedPhysicalUIButtonHandler : MonoBehaviour
     }
 
     // ==========================================
-    // LOGIC UTAMA
+    // LOGIC UTAMA / MAIN LOGIC
     // ==========================================
     private void OnTriggerPressed(InputAction.CallbackContext ctx)
     {
-        // Cek Interactor mana yang sedang aktif/valid
-        if (leftRayInteractor != null)
+        if (rayInteractor != null)
         {
-            CheckAndClick(leftRayInteractor);
+            CheckAndClick(rayInteractor);
         }
-
-        // Anda bisa menambahkan logika untuk tangan kanan di sini jika perlu
     }
 
     private void CheckAndClick(XRRayInteractor interactor)
     {
-        // 1. Minta data Raycast Hit dari Interactor
+        // [ID] 1. Minta data Raycast Hit dari Interactor
+        // [EN] 1. Request Raycast Hit data from the Interactor
         if (interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
-            // 2. Cek apakah objek yang tertabrak ada di dalam daftar Array Collider kita?
-            // Fungsi Array.IndexOf akan mencari nomor index collider yang tertabrak
-            // Jika tidak ketemu, hasilnya -1.
+            // [ID] 2. Cari index collider yang tertabrak di dalam array
+            // [EN] 2. Find the index of the hit collider within the array
             int index = Array.IndexOf(buttonBoxColliders, hit.collider);
 
-            if (index != -1) // Artinya KETEMU!
+            // [ID] Jika index ditemukan (bukan -1)
+            // [EN] If index is found (not -1)
+            if (index != -1)
             {
-                // 3. Pastikan ada tombol pasangan di index yang sama
+                // [ID] 3. Pastikan tombol UI di index tersebut ada/valid
+                // [EN] 3. Ensure the UI button at that index is present/valid
                 if (index < canvasButtons.Length && canvasButtons[index] != null)
                 {
                     if (showDebug)
-                        Debug.Log($"[PhysicalUI] Collider '{hit.collider.name}' hit! Clicking Button '{canvasButtons[index].name}'");
+                        Debug.Log($"[PhysicalUI] Hit Collider [{index}]: '{hit.collider.name}' -> Clicking Button: '{canvasButtons[index].name}'");
 
-                    // 4. KLIK TOMBOLNYA
+                    // [ID] 4. Eksekusi fungsi OnClick pada tombol
+                    // [EN] 4. Execute the OnClick function on the button
                     canvasButtons[index].onClick.Invoke();
                 }
                 else
                 {
-                    Debug.LogWarning($"[PhysicalUI] Collider ketemu di index {index}, tapi Array Button kosong/null di index itu!");
+                    Debug.LogWarning($"[PhysicalUI] Collider found at index {index}, but Button is missing!");
                 }
-            }
-            else
-            {
-                if (showDebug) Debug.Log($"[PhysicalUI] Raycast kena '{hit.collider.name}', tapi bukan bagian dari tombol UI.");
             }
         }
     }
 
     // ==========================================
-    // VISUALISASI DI EDITOR (GIZMOS)
+    // VISUALISASI / VISUALIZATION
     // ==========================================
-    // Ini membantu Anda melihat garis penghubung antara Collider dan Tombol di Scene View
     private void OnDrawGizmosSelected()
     {
         if (buttonBoxColliders == null || canvasButtons == null) return;
 
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.cyan; // Warna Cyan untuk Button
         for (int i = 0; i < buttonBoxColliders.Length; i++)
         {
             if (i < canvasButtons.Length && buttonBoxColliders[i] != null && canvasButtons[i] != null)
             {
-                // Gambar garis dari collider 3D ke posisi canvas (hanya visualisasi editor)
+                // [ID] Gambar garis penghubung visual antara Collider fisik dan Tombol UI
+                // [EN] Draw a visual connecting line between physical Collider and UI Button
                 Gizmos.DrawLine(buttonBoxColliders[i].transform.position, canvasButtons[i].transform.position);
             }
         }

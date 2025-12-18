@@ -1,8 +1,6 @@
 # VR Adaptive UI Toolkit
 
-**VR Adaptive UI Toolkit** is a robust user interface solution for Unity VR that enables flexible UI interactions on 3D meshes (such as curved screens) using a **Physical Proxy Mapping** technique and **Render Textures**.
-
-This toolkit solves the complexity of interacting with curved Canvases in VR by decoupling the visual layer from the physical interaction layer, ensuring reliability across different resolutions.
+**VR Adaptive UI Toolkit** is a comprehensive solution for Unity VR designed to bridge the gap between immersive 3D visuals and reliable user interaction. It enables developers to project dynamic UI onto complex 3D surfaces—such as curved screens—while maintaining precise input detection through a physics-based proxy system. Beyond interaction, the toolkit enhances user experience with intelligent positioning features, including smooth camera-follow behaviors and instant auto-focus capabilities, ensuring interfaces remain accessible and comfortable in a spatial environment.
 
 ## 🌟 Key Features
 

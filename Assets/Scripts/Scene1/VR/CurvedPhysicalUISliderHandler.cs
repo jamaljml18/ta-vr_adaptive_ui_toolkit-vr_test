@@ -6,113 +6,143 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
-/// [ID] Menangani interaksi VR Slider menggunakan pendekatan "Physical Proxy".
-/// Menghitung posisi relatif raycast pada Box Collider untuk menentukan nilai Slider.
+/// [ID] Menangani interaksi VR Slider dengan fitur DRAG (Tahan dan Geser).
+/// Menggunakan Update loop untuk mengubah nilai slider secara real-time saat trigger ditahan.
 /// 
-/// [EN] Handles VR Slider interaction using the "Physical Proxy" approach.
-/// Calculates the relative raycast position on the Box Collider to determine Slider value.
+/// [EN] Handles VR Slider interaction with DRAG feature (Hold and Slide).
+/// Uses Update loop to change slider value in real-time while trigger is held.
 /// </summary>
-public class CurvedPhysicalUISliderHandler : MonoBehaviour
+public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
 {
     [Header("Mapping Configuration")]
-    [Tooltip("[ID] Daftar Box Collider yang menutupi area batang/track Slider.\n[EN] List of Box Colliders covering the Slider track area.")]
     public BoxCollider[] sliderColliders;
-
-    [Tooltip("[ID] Daftar UI Slider yang sesuai dengan urutan Collider di atas.\n[EN] List of UI Sliders corresponding to the order of Colliders above.")]
     public Slider[] canvasSliders;
 
     [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
     [SerializeField] private XRRayInteractor rayInteractor;
-
-    [Header("Input Action")]
     [SerializeField] private InputActionReference selectAction;
 
     [Header("Debug")]
-    [SerializeField] private bool showDebug = true;
+    [SerializeField] private bool showDebug = false;
+
+    // [ID] State untuk mengecek apakah user sedang menahan trigger
+    // [EN] State to check if user is holding the trigger
+    private bool isDragging = false;
+
+    // [ID] Menyimpan index slider mana yang sedang digerakkan
+    // [EN] Stores the index of the slider currently being moved
+    private int activeSliderIndex = -1;
 
     private void Start()
     {
-        // [ID] Validasi panjang array
         if (sliderColliders.Length != canvasSliders.Length)
-            Debug.LogError($"[PhysicalSlider] Mismatch! Colliders: {sliderColliders.Length}, Sliders: {canvasSliders.Length}.");
+            Debug.LogError($"[PhysicalSliderDrag] Mismatch! Colliders: {sliderColliders.Length}, Sliders: {canvasSliders.Length}.");
     }
 
     private void OnEnable()
     {
         if (selectAction != null)
-            selectAction.action.started += OnTriggerPressed;
+        {
+            // [ID] Kita butuh dua event: Saat ditekan (Mulai) dan Saat dilepas (Berhenti)
+            // [EN] We need two events: When pressed (Start) and When released (Stop)
+            selectAction.action.started += OnDragStarted;
+            selectAction.action.canceled += OnDragEnded;
+        }
     }
 
     private void OnDisable()
     {
         if (selectAction != null)
-            selectAction.action.started -= OnTriggerPressed;
-    }
-
-    // [ID] Event saat trigger ditekan (Sekali klik)
-    // [EN] Event when trigger is pressed (Single click)
-    private void OnTriggerPressed(InputAction.CallbackContext ctx)
-    {
-        if (rayInteractor != null)
         {
-            CheckAndSlide(rayInteractor);
+            selectAction.action.started -= OnDragStarted;
+            selectAction.action.canceled -= OnDragEnded;
         }
     }
 
-    // [ID] Fungsi utama perhitungan Slider
-    // [EN] Main Slider calculation function
-    private void CheckAndSlide(XRRayInteractor interactor)
+    // ============================================================
+    // INPUT EVENTS (STATE MACHINE)
+    // ============================================================
+
+    // [ID] 1. Saat Trigger Ditekan: Cek apakah kena slider? Jika ya, mulai Dragging.
+    // [EN] 1. When Trigger Pressed: Check if hitting slider? If yes, start Dragging.
+    private void OnDragStarted(InputAction.CallbackContext ctx)
     {
-        if (interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
-            // 1. Cari index collider
+            // Cek apakah yang kena adalah salah satu collider slider kita
             int index = Array.IndexOf(sliderColliders, hit.collider);
 
             if (index != -1 && index < canvasSliders.Length)
             {
-                // [ID] 2. Ambil Collider dan Slider yang cocok
-                BoxCollider col = sliderColliders[index];
-                Slider uiSlider = canvasSliders[index];
+                isDragging = true;
+                activeSliderIndex = index;
 
-                if (col != null && uiSlider != null)
+                // [ID] Opsional: Update nilai sekali saat pertama ditekan (agar responsif)
+                // [EN] Optional: Update value once on first press (to be responsive)
+                UpdateSliderValue(hit.point);
+            }
+        }
+    }
+
+    // [ID] 2. Saat Trigger Dilepas: Hentikan Dragging.
+    // [EN] 2. When Trigger Released: Stop Dragging.
+    private void OnDragEnded(InputAction.CallbackContext ctx)
+    {
+        isDragging = false;
+        activeSliderIndex = -1;
+    }
+
+    // ============================================================
+    // UPDATE LOOP (REAL-TIME CALCULATION)
+    // ============================================================
+
+    private void Update()
+    {
+        // [ID] Jika sedang dragging DAN ada slider yang aktif
+        // [EN] If currently dragging AND there is an active slider
+        if (isDragging && activeSliderIndex != -1 && rayInteractor != null)
+        {
+            // [ID] Dapatkan posisi raycast terbaru setiap frame
+            // [EN] Get the latest raycast position every frame
+            if (rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+            {
+                // [ID] PENTING: Pastikan raycast masih mengenai collider slider yang sama
+                // Jika laser keluar dari kotak slider, kita berhenti update agar tidak error/lompat
+                // [EN] CRITICAL: Ensure raycast is still hitting the same slider collider
+                // If laser exits the slider box, we stop updating to prevent errors/jumping
+                if (hit.collider == sliderColliders[activeSliderIndex])
                 {
-                    // ==========================================================
-                    // MATEMATIKA LOKAL (LOCAL SPACE MATH)
-                    // ==========================================================
-
-                    // [ID] Ubah posisi tabrak dunia (World) ke posisi lokal Collider
-                    // Ini penting agar rotasi melengkung tidak merusak perhitungan
-                    // [EN] Convert World hit position to Collider's Local position
-                    // This is crucial so curved rotation doesn't break calculation
-                    Vector3 localHitPoint = col.transform.InverseTransformPoint(hit.point);
-
-                    // [ID] Ukuran lebar collider (X-Axis)
-                    // [EN] Collider width size (X-Axis)
-                    float colliderWidth = col.size.x;
-
-                    // [ID] Posisi X lokal biasanya range dari -(Width/2) sampai +(Width/2)
-                    // Kita geser agar mulainya dari 0 sampai Width
-                    // [EN] Local X position usually ranges from -(Width/2) to +(Width/2)
-                    // We shift it so it starts from 0 to Width
-                    float adjustedX = localHitPoint.x + (colliderWidth / 2f);
-
-                    // [ID] Hitung persentase (0.0 sampai 1.0)
-                    // [EN] Calculate percentage (0.0 to 1.0)
-                    float normalizedValue = Mathf.Clamp01(adjustedX / colliderWidth);
-
-                    // [ID] Aplikasikan ke Slider UI
-                    // Rumus: MinValue + (Persentase * (Max - Min))
-                    // [EN] Apply to UI Slider
-                    // Formula: MinValue + (Percentage * (Max - Min))
-                    float newValue = uiSlider.minValue + (normalizedValue * (uiSlider.maxValue - uiSlider.minValue));
-
-                    uiSlider.value = newValue;
-
-                    if (showDebug)
-                        Debug.Log($"[PhysicalSlider] Hit Local X: {localHitPoint.x:F2} -> Norm: {normalizedValue:P0} -> Value: {newValue}");
+                    UpdateSliderValue(hit.point);
                 }
             }
+        }
+    }
+
+    // [ID] Logika Matematika (Sama seperti sebelumnya)
+    // [EN] Math Logic (Same as before)
+    private void UpdateSliderValue(Vector3 worldHitPoint)
+    {
+        BoxCollider col = sliderColliders[activeSliderIndex];
+        Slider uiSlider = canvasSliders[activeSliderIndex];
+
+        if (col != null && uiSlider != null)
+        {
+            // 1. World to Local
+            Vector3 localHitPoint = col.transform.InverseTransformPoint(worldHitPoint);
+
+            // 2. Calculate Normalized Value (0 to 1)
+            float colliderWidth = col.size.x;
+
+            // Shift range from [-Width/2, +Width/2] to [0, Width]
+            float adjustedX = localHitPoint.x + (colliderWidth / 2f);
+            float normalizedValue = Mathf.Clamp01(adjustedX / colliderWidth);
+
+            // 3. Apply to UI
+            float newValue = uiSlider.minValue + (normalizedValue * (uiSlider.maxValue - uiSlider.minValue));
+            uiSlider.value = newValue;
+
+            if (showDebug)
+                Debug.Log($"[SliderDrag] Val: {newValue:F2}");
         }
     }
 
@@ -123,15 +153,13 @@ public class CurvedPhysicalUISliderHandler : MonoBehaviour
     {
         if (sliderColliders == null || canvasSliders == null) return;
 
-        Gizmos.color = Color.magenta; // Warna Magenta untuk Slider
+        Gizmos.color = Color.magenta;
         for (int i = 0; i < sliderColliders.Length; i++)
         {
             if (i < canvasSliders.Length && sliderColliders[i] != null && canvasSliders[i] != null)
             {
                 Gizmos.DrawLine(sliderColliders[i].transform.position, canvasSliders[i].transform.position);
 
-                // [ID] Visualisasi arah slider (Sumbu X merah)
-                // [EN] Visualize slider direction (Red X-Axis)
                 Gizmos.color = Color.red;
                 Vector3 left = sliderColliders[i].transform.TransformPoint(new Vector3(-sliderColliders[i].size.x / 2, 0, 0));
                 Vector3 right = sliderColliders[i].transform.TransformPoint(new Vector3(sliderColliders[i].size.x / 2, 0, 0));
@@ -141,7 +169,3 @@ public class CurvedPhysicalUISliderHandler : MonoBehaviour
         }
     }
 }
-
-// Jika Slider Anda vertikal, putar Game Object Box Collider-nya 90 derajat (Z axis),
-// jangan ubah Size Y-nya, tapi tetap gunakan Size X sebagai panjang slider.
-// Script ini mengasumsikan "Panjang Slider = Size X Collider".

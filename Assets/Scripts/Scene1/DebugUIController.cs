@@ -23,6 +23,12 @@ public class DebugUIController : MonoBehaviour
     [SerializeField] private GameObject toggleB;
     [SerializeField] private GameObject sliderA;
     [SerializeField] private GameObject sliderB;
+    [SerializeField] private GameObject sliderC;
+    [SerializeField] private GameObject sliderD;
+    [SerializeField] private GameObject scrollbarA;
+    [SerializeField] private GameObject scrollbarB;
+    [SerializeField] private GameObject scrollbarC;
+    [SerializeField] private GameObject scrollbarD;
 
     private int index = 1;
 
@@ -53,6 +59,19 @@ public class DebugUIController : MonoBehaviour
         curved_ui_slider_panel.SetActive(false);
         curved_ui_scrollbar_panel.SetActive(false);
         curved_ui_dropdown_panel.SetActive(false);
+
+        buttonA.SetActive(true);
+        buttonB.SetActive(true);
+        toggleA.SetActive(false);
+        toggleB.SetActive(false);
+        sliderA.SetActive(false);
+        sliderB.SetActive(false);
+        sliderC.SetActive(false);
+        sliderD.SetActive(false);
+        scrollbarA.SetActive(false);
+        scrollbarB.SetActive(false);
+        scrollbarC.SetActive(false);
+        scrollbarD.SetActive(false);
     }
 
     private void OnVRPressed(InputAction.CallbackContext ctx)
@@ -90,6 +109,12 @@ public class DebugUIController : MonoBehaviour
                 toggleB.SetActive(false);
                 sliderA.SetActive(false);
                 sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
 
                 curved_ui_button_panel.SetActive(true);
                 Debug.Log("Show Button Panel");
@@ -107,6 +132,12 @@ public class DebugUIController : MonoBehaviour
                 toggleB.SetActive(true);
                 sliderA.SetActive(false);
                 sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
 
                 curved_ui_toggle_panel.SetActive(true);
                 Debug.Log("Show Toggle Panel");
@@ -124,6 +155,12 @@ public class DebugUIController : MonoBehaviour
                 toggleB.SetActive(false);
                 sliderA.SetActive(true);
                 sliderB.SetActive(true);
+                sliderC.SetActive(true);
+                sliderD.SetActive(true);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
 
                 curved_ui_slider_panel.SetActive(true);
                 Debug.Log("Show Slider Panel");
@@ -136,12 +173,31 @@ public class DebugUIController : MonoBehaviour
                 toggleB.SetActive(false);
                 sliderA.SetActive(false);
                 sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(true);
+                scrollbarB.SetActive(true);
+                scrollbarC.SetActive(true);
+                scrollbarD.SetActive(true);
 
                 curved_ui_scrollbar_panel.SetActive(true);
                 Debug.Log("Show Scrollbar Panel");
                 break;
 
             case 7:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
+
                 curved_ui_dropdown_panel.SetActive(true);
                 Debug.Log("Show Dropdown Panel");
                 break;

@@ -19,7 +19,10 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
     public Slider[] canvasSliders;
 
     [Header("VR Settings")]
+    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
     [SerializeField] private XRRayInteractor rayInteractor;
+
+    [Header("Input Action")]
     [SerializeField] private InputActionReference selectAction;
 
     [Header("Debug")]

@@ -146,6 +146,7 @@ public class UIFollowCamera : MonoBehaviour
             curvedMesh.gameObject.SetActive(true);
         }
 
+        alwaysFaceCamera = true;
         followX = true;
         followY = true;
         followZ = true;
@@ -157,6 +158,7 @@ public class UIFollowCamera : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f);
         print("Follow X Y Z kembali false");
+        alwaysFaceCamera = false;
         followX = false;
         followY = false;
         followZ = false;
@@ -183,6 +185,7 @@ public class UIFollowCamera : MonoBehaviour
 
     private void ChangeFollowXYZ ()
     {
+        alwaysFaceCamera = !alwaysFaceCamera;
         followX = !followX;
         followY = !followY;
         followZ = !followZ;

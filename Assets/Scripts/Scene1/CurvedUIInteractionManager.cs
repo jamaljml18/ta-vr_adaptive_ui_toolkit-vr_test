@@ -115,6 +115,39 @@ public class CurvedUIInteractionManager : MonoBehaviour
         print("Slider B Value: " + value);
     }
 
+    /// <summary>
+    /// [ID] Dipanggil otomatis oleh Slider C ketika nilainya berubah.
+    /// [EN] Automatically called by Slider C when its value changes.
+    /// </summary>
+    /// <param name="value">[ID] Nilai slider saat ini / [EN] Current slider value</param>
+    public void SliderC(float value)
+    {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
+        // [ID] Menampilkan nilai Slider C
+        // [EN] Print Slider C's current value
+        print("Slider C Value: " + value);
+    }
+
+    /// <summary>
+    /// [ID] Dipanggil otomatis oleh Slider D ketika nilainya berubah.
+    /// [EN] Automatically called by Slider D when its value changes.
+    /// </summary>
+    /// <param name="value">[ID] Nilai slider saat ini / [EN] Current slider value</param>
+    public void SliderD(float value)
+    {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
+        // [ID] Menampilkan nilai Slider D
+        // [EN] Print Slider D's current value
+        print("Slider D Value: " + value);
+    }
     // --- SCROLLBARS ---
 
     /// <summary>
@@ -124,6 +157,11 @@ public class CurvedUIInteractionManager : MonoBehaviour
     /// <param name="value">[ID] Nilai scrollbar saat ini (0.0 - 1.0) / [EN] Current scrollbar value (0.0 - 1.0)</param>
     public void ScrollbarA(float value)
     {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
         // [ID] Menampilkan nilai Scrollbar A
         // [EN] Print Scrollbar A's current value
         print("Scrollbar A Value: " + value);
@@ -136,8 +174,47 @@ public class CurvedUIInteractionManager : MonoBehaviour
     /// <param name="value">[ID] Nilai scrollbar saat ini (0.0 - 1.0) / [EN] Current scrollbar value (0.0 - 1.0)</param>
     public void ScrollbarB(float value)
     {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
         // [ID] Menampilkan nilai Scrollbar B
         // [EN] Print Scrollbar B's current value
         print("Scrollbar B Value: " + value);
+    }
+
+    /// <summary>
+    /// [ID] Dipanggil otomatis oleh Scrollbar C ketika nilainya berubah.
+    /// [EN] Automatically called by Scrollbar C when its value changes.
+    /// </summary>
+    /// <param name="value">[ID] Nilai scrollbar saat ini (0.0 - 1.0) / [EN] Current scrollbar value (0.0 - 1.0)</param>
+    public void ScrollbarC(float value)
+    {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
+        // [ID] Menampilkan nilai Scrollbar C
+        // [EN] Print Scrollbar C's current value
+        print("Scrollbar C Value: " + value);
+    }
+
+    /// <summary>
+    /// [ID] Dipanggil otomatis oleh Scrollbar D ketika nilainya berubah.
+    /// [EN] Automatically called by Scrollbar D when its value changes.
+    /// </summary>
+    /// <param name="value">[ID] Nilai scrollbar saat ini (0.0 - 1.0) / [EN] Current scrollbar value (0.0 - 1.0)</param>
+    public void ScrollbarD(float value)
+    {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
+        // [ID] Menampilkan nilai Scrollbar D
+        // [EN] Print Scrollbar D's current value
+        print("Scrollbar D Value: " + value);
     }
 }

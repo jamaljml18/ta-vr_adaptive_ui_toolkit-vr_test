@@ -5,6 +5,12 @@ using UnityEngine;
 public class CurvedUIInteractionManager : MonoBehaviour
 {
     [SerializeField] private GameObject cubeDebug;
+    private Vector3 startPos;
+
+    private void Start()
+    {
+        startPos = cubeDebug.transform.position;
+    }
     // --- BUTTONS ---
 
     public void ButtonA()
@@ -35,12 +41,14 @@ public class CurvedUIInteractionManager : MonoBehaviour
     {
         if (isOn)
         {
+            cubeDebug.SetActive(!cubeDebug.activeSelf);
             // [ID] Logika jika Toggle A menyala (aktif)
             // [EN] Logic if Toggle A is turned on (active)
             print("Toggle A: ON (Active)");
         }
         else
         {
+            cubeDebug.SetActive(!cubeDebug.activeSelf);
             // [ID] Logika jika Toggle A mati (tidak aktif)
             // [EN] Logic if Toggle A is turned off (inactive)
             print("Toggle A: OFF (Inactive)");
@@ -56,12 +64,14 @@ public class CurvedUIInteractionManager : MonoBehaviour
     {
         if (isOn)
         {
+            cubeDebug.SetActive(!cubeDebug.activeSelf);
             // [ID] Logika jika Toggle B menyala
             // [EN] Logic if Toggle B is turned on
             print("Toggle B: ON (Active)");
         }
         else
         {
+            cubeDebug.SetActive(!cubeDebug.activeSelf);
             // [ID] Logika jika Toggle B mati
             // [EN] Logic if Toggle B is turned off
             print("Toggle B: OFF (Inactive)");
@@ -78,6 +88,11 @@ public class CurvedUIInteractionManager : MonoBehaviour
     /// <param name="value">[ID] Nilai slider saat ini / [EN] Current slider value</param>
     public void SliderA(float value)
     {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
         // [ID] Menampilkan nilai Slider A
         // [EN] Print Slider A's current value
         print("Slider A Value: " + value);
@@ -90,6 +105,11 @@ public class CurvedUIInteractionManager : MonoBehaviour
     /// <param name="value">[ID] Nilai slider saat ini / [EN] Current slider value</param>
     public void SliderB(float value)
     {
+        cubeDebug.transform.position = new Vector3(
+        startPos.x + value,
+        startPos.y,
+        startPos.z
+        );
         // [ID] Menampilkan nilai Slider B
         // [EN] Print Slider B's current value
         print("Slider B Value: " + value);

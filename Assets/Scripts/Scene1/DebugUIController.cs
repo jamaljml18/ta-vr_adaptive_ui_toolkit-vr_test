@@ -16,6 +16,14 @@ public class DebugUIController : MonoBehaviour
     [SerializeField] private InputActionReference vrInput; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
                                                            // [EN] VR Input used to detect click/trigger events inside VR
 
+    [Header("Button, Toggle, Slider")]
+    [SerializeField] private GameObject buttonA;
+    [SerializeField] private GameObject buttonB;
+    [SerializeField] private GameObject toggleA;
+    [SerializeField] private GameObject toggleB;
+    [SerializeField] private GameObject sliderA;
+    [SerializeField] private GameObject sliderB;
+
     private int index = 1;
 
     private void OnEnable()
@@ -76,6 +84,13 @@ public class DebugUIController : MonoBehaviour
         switch (index)
         {
             case 1:
+                buttonA.SetActive(true);
+                buttonB.SetActive(true);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+
                 curved_ui_button_panel.SetActive(true);
                 Debug.Log("Show Button Panel");
                 break;
@@ -86,6 +101,13 @@ public class DebugUIController : MonoBehaviour
                 break;
 
             case 3:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(true);
+                toggleB.SetActive(true);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+
                 curved_ui_toggle_panel.SetActive(true);
                 Debug.Log("Show Toggle Panel");
                 break;
@@ -96,11 +118,25 @@ public class DebugUIController : MonoBehaviour
                 break;
 
             case 5:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(true);
+                sliderB.SetActive(true);
+
                 curved_ui_slider_panel.SetActive(true);
                 Debug.Log("Show Slider Panel");
                 break;
 
             case 6:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+
                 curved_ui_scrollbar_panel.SetActive(true);
                 Debug.Log("Show Scrollbar Panel");
                 break;

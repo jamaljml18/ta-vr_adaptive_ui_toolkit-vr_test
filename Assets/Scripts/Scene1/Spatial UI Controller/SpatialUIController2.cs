@@ -36,7 +36,7 @@ public class SpatialUIController2 : MonoBehaviour
     // [Tooltip("Jika aktif, UI akan selalu menghadap kamera.\nIf enabled, the UI will always face the camera.")]
     private bool alwaysFaceCamera;
 
-    [Header("Curved Mesh")]
+    [Header("UI")]
     [Tooltip("UI yang akan ditampilkan atau disembunyikan. \nUI that will be shown or hidden.")]
     [SerializeField] private GameObject ui;
 

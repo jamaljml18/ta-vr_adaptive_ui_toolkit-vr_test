@@ -455,15 +455,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Change followXYZ",
-                    "type": "Button",
-                    "id": "b2d0e1da-fe08-483e-bc34-e7bd326ff241",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Click",
                     "type": "Button",
                     "id": "1a25df54-56ce-45da-bf0e-255b102c2ad3",
@@ -473,7 +464,16 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Debug UI",
+                    "name": "Debug Change followXYZ",
+                    "type": "Button",
+                    "id": "b2d0e1da-fe08-483e-bc34-e7bd326ff241",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Debug Change UI",
                     "type": "Button",
                     "id": "6624c549-fc9d-463e-84dc-85926dadc08a",
                     "expectedControlType": "",
@@ -897,7 +897,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Change followXYZ",
+                    "action": "Debug Change followXYZ",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -919,7 +919,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Debug UI",
+                    "action": "Debug Change UI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1608,7 +1608,16 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Find UI",
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "35bd3a93-0afb-4004-b637-5f3f281520f3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Display UI",
                     "type": "Button",
                     "id": "5f57c7aa-a937-4e58-b595-6173047c4fa3",
                     "expectedControlType": "",
@@ -1617,7 +1626,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hidden UI",
+                    "name": "Hide UI",
                     "type": "Button",
                     "id": "c98cd19d-61c1-4088-b18f-0a512ae26ccb",
                     "expectedControlType": "",
@@ -2041,7 +2050,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Find UI",
+                    "action": "Display UI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -2052,7 +2061,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Hidden UI",
+                    "action": "Hide UI",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "edb8ad16-a03e-4cd4-b337-8017087681a7",
+                    "path": "<XRController>{RightHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

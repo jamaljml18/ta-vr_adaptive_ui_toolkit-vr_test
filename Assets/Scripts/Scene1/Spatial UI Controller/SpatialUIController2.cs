@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UIFollowCamera : MonoBehaviour
+public class SpatialUIController2 : MonoBehaviour
 {
     [Header("Target Settings")]
     [Tooltip("Transform kamera yang akan diikuti oleh UI.\nCamera transform that the UI will follow.")]
@@ -32,22 +32,29 @@ public class UIFollowCamera : MonoBehaviour
     [Tooltip("Semakin besar nilai, semakin lambat/halus pergerakannya (efek lag).\nHigher values result in slower and smoother movement (lag effect).")]
     [SerializeField] private float smoothTime;
 
-    [Header("Rotation Settings (Pengaturan Rotasi)")]
-    [Tooltip("Jika aktif, UI akan selalu menghadap kamera.\nIf enabled, the UI will always face the camera.")]
-    [SerializeField] private bool alwaysFaceCamera;
+    // [Header("Rotation Settings (Pengaturan Rotasi)")]
+    // [Tooltip("Jika aktif, UI akan selalu menghadap kamera.\nIf enabled, the UI will always face the camera.")]
+    private bool alwaysFaceCamera;
 
     [Header("Curved Mesh")]
-    [SerializeField] private GameObject curvedMesh;
-    // [ID] GameObject UI melengkung (Curved UI) yang akan ditampilkan atau disembunyikan
-    // [EN] Curved UI GameObject that will be shown or hidden
+    [Tooltip("UI yang akan ditampilkan atau disembunyikan. \nUI that will be shown or hidden.")]
+    [SerializeField] private GameObject ui;
 
     [Header("VR Input")]
-    [SerializeField] private InputActionReference vrInput; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
-                                                           // [EN] VR Input used to detect click/trigger events inside VR
-    [SerializeField] private InputActionReference vrInput2; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
-                                                            // [EN] VR Input used to detect click/trigger events inside VR
-    [SerializeField] private InputActionReference vrInput3; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
-                                                            // [EN] VR Input used to detect click/trigger events inside VR
+    [Tooltip("Opsional, dapat dikosongi jika followX, followY, atau followZ tidak kosong, tombol akan digunakan untuk menampilkan ui. " +
+        "\nOptionally, can be left blank if followX, followY, or followZ are not blank, the button will be used to display the ui.")]
+    [SerializeField] private InputActionReference displaysUIInput;
+
+    [Tooltip("Opsional, dapat dikosongi jika followX, followY, atau followZ tidak kosong, tombol akan digunakan untuk menyembunyikan ui. " +
+        "\nOptionally, can be left blank if followX, followY, or followZ are not blank, the button will be used to hide the ui.")]
+    [SerializeField] private InputActionReference hideUIInput;
+
+    [Tooltip("Opsional, dapat dikosongi, tombol akan digunakan untuk memastikan UI berada di depan tampilan pengguna. \n" +
+        "Optional, can be left blank, button will be used to ensure the UI is in front of the user's view.")]
+    [SerializeField] private InputActionReference recenterUIInput;
+
+    [SerializeField] private InputActionReference debugInput; 
+                                                           
 
     // [ID] Velocity digunakan untuk SmoothDamp
     // [EN] Velocity used internally by SmoothDamp
@@ -57,10 +64,10 @@ public class UIFollowCamera : MonoBehaviour
     {
         // [ID] Aktifkan listener input VR ketika object aktif
         // [EN] Enable VR input listener when this object becomes active
-        if (vrInput != null)
-            vrInput.action.started += OnVRPressed;
-            vrInput2.action.started += OnVRPressed2;
-            vrInput3.action.started += OnVRPressed3;
+        displaysUIInput.action.started += DisplaysUIInputPressed;
+        hideUIInput.action.started += HideUIInputPressed;
+        recenterUIInput.action.started += RecenterUIInputPressed;
+        debugInput.action.started += DebugInputPressed;
 
     }
 
@@ -68,10 +75,10 @@ public class UIFollowCamera : MonoBehaviour
     {
         // [ID] Lepaskan listener VR untuk mencegah memory leak
         // [EN] Remove VR listener to avoid memory leaks
-        if (vrInput != null)
-            vrInput.action.started -= OnVRPressed;
-            vrInput2.action.started -= OnVRPressed2;
-            vrInput3.action.started -= OnVRPressed3;
+        displaysUIInput.action.started -= DisplaysUIInputPressed;
+        hideUIInput.action.started -= HideUIInputPressed;
+        recenterUIInput.action.started -= RecenterUIInputPressed;
+        debugInput.action.started -= DebugInputPressed;
 
     }
 
@@ -93,34 +100,46 @@ public class UIFollowCamera : MonoBehaviour
         UpdatePosition(true);
     }
 
-    private void OnVRPressed(InputAction.CallbackContext ctx)
+    private void DisplaysUIInputPressed(InputAction.CallbackContext ctx)
     {
-        // [ID] Dipanggil saat input VR utama (misalnya trigger) ditekan
-        // [EN] Called when the primary VR input (e.g., trigger) is pressed
+        // [ID] Dipanggil saat displaysUIInput ditekan
+        // [EN] Called when displaysUIInput is pressed
 
-        Debug.Log("VR INPUT TRIGGERED! Find");
+        Debug.Log("DisplaysUIInputPressed");
 
-        // [ID] Tampilkan UI melengkung
-        // [EN] Show the curved UI
-        FindUI();
+        // [ID] Tampilkan UI
+        // [EN] Show the UI
+        DisplayUI();
     }
 
-    private void OnVRPressed2(InputAction.CallbackContext ctx)
+    private void HideUIInputPressed(InputAction.CallbackContext ctx)
     {
-        // [ID] Dipanggil saat input VR sekunder ditekan
-        // [EN] Called when the secondary VR input is pressed
+        // [ID] Dipanggil saat hideUIInput ditekan
+        // [EN] Called when hideUIInput is pressed
 
-        Debug.Log("VR INPUT TRIGGERED! Hidden");
+        Debug.Log("HideUIInputPressed");
 
-        // [ID] Sembunyikan UI melengkung
-        // [EN] Hide the curved UI
-        HiddenUI();
+        // [ID] Sembunyikan UI
+        // [EN] Hide the UI
+        HideUI();
     }
 
-    private void OnVRPressed3(InputAction.CallbackContext ctx)
+    private void RecenterUIInputPressed(InputAction.CallbackContext ctx)
     {
-        // [ID] Dipanggil saat input VR utama (misalnya trigger) ditekan
-        // [EN] Called when the primary VR input (e.g., trigger) is pressed
+        // [ID] Dipanggil saat recenterUIInput ditekan
+        // [EN] Called when recenterUIInput is pressed
+
+        Debug.Log("RecenterUIInputPressed");
+
+        // [ID] Mencenterkan UI di depan pengguna
+        // [EN] Centering the UI in front of the user
+        RecenterUI();
+    }
+
+    private void DebugInputPressed(InputAction.CallbackContext ctx)
+    {
+        // [ID] Dipanggil saat DebugInputPressed ditekan
+        // [EN] Called when DebugInputPressed is pressed
 
         Debug.Log("VR INPUT TRIGGERED! Change");
 
@@ -128,7 +147,7 @@ public class UIFollowCamera : MonoBehaviour
         // [EN] Change followX, followY, and followZ
         ChangeFollowXYZ();
     }
-    private void FindUI()
+    private void DisplayUI()
     {
         // [ID] Jika UI sedang mengikuti posisi kamera pada sumbu tertentu,
         //      maka fungsi ini tidak dijalankan untuk mencegah konflik transform
@@ -139,32 +158,60 @@ public class UIFollowCamera : MonoBehaviour
             return;
         }
 
-        // [ID] Aktifkan Curved UI jika saat ini tidak aktif
-        // [EN] Activate the curved UI if it is currently inactive
-        if (curvedMesh.gameObject.activeSelf == false)
+        // [ID] Aktifkan UI jika saat ini tidak aktif
+        // [EN] Activate the UI if it is currently inactive
+        if (ui.gameObject.activeSelf == false)
         {
-            curvedMesh.gameObject.SetActive(true);
+            ui.gameObject.SetActive(true);
         }
 
+        // [ID] Paksa UI untuk menghadap kamera dan mengikuti posisi kamera
+        // [EN] Force UI to face the camera and follow camera position
         alwaysFaceCamera = true;
         followX = true;
         followY = true;
         followZ = true;
+
+        // [ID] Snap posisi secara instan ke depan kamera
+        // [EN] Instantly snap position to the front of the camera
         UpdatePosition(true);
+
+        // [ID] Mulai coroutine untuk melepas kuncian posisi setelah jeda
+        // [EN] Start coroutine to release position lock after a delay
         StartCoroutine(BackToFrontCamera());
+    }
+
+    private void RecenterUI()
+    {
+        // [ID] Paksa UI untuk menghadap kamera dan mengikuti posisi kamera
+        // [EN] Force UI to face the camera and follow camera position
+        alwaysFaceCamera = true;
+        followX = true;
+        followY = true;
+        followZ = true;
+
+        // [ID] Snap posisi secara instan ke depan kamera
+        // [EN] Instantly snap position to the front of the camera
+        UpdatePosition(true);
     }
 
     private IEnumerator BackToFrontCamera()
     {
+        // [ID] Tunggu sebentar sebelum melepas UI agar diam di tempat
+        // [EN] Wait briefly before releasing the UI to stay in place
         yield return new WaitForSeconds(.5f);
-        print("Follow X Y Z kembali false");
+
+        print("Follow X Y Z kembali false / released");
+
+        // [ID] Nonaktifkan fitur mengikuti kamera agar UI menjadi statis di dunia
+        // [EN] Disable camera following so the UI becomes static in the world
         alwaysFaceCamera = false;
         followX = false;
         followY = false;
         followZ = false;
     }
 
-    private void HiddenUI()
+    private void HideUI()
     {
         // [ID] Jika UI sedang mengikuti posisi kamera pada sumbu tertentu,
         //      maka fungsi ini tidak dijalankan untuk mencegah konflik transform
@@ -175,15 +222,17 @@ public class UIFollowCamera : MonoBehaviour
             return;
         }
 
-        // [ID] Nonaktifkan Curved UI jika saat ini masih aktif
-        // [EN] Deactivate the curved UI if it is currently active
-        if (curvedMesh.gameObject.activeSelf == true)
+        // [ID] Nonaktifkan UI jika saat ini masih aktif
+        // [EN] Deactivate the UI if it is currently active
+        if (ui.gameObject.activeSelf == true)
         {
-            curvedMesh.gameObject.SetActive(false);
+            ui.gameObject.SetActive(false);
         }
     }
 
-    private void ChangeFollowXYZ ()
+    // [ID] Fungsi ChangeFollowXYZ() hanya digunakan untuk melakukan debugging.
+    // [EN] The ChangeFollowXYZ() function is only used for debugging.
+    private void ChangeFollowXYZ()
     {
         alwaysFaceCamera = !alwaysFaceCamera;
         followX = !followX;

@@ -40,12 +40,16 @@ public class CurvedPhysicalUISliderHandler2 : MonoBehaviour
 
     private void OnEnable()
     {
+        // [ID] Aktifkan listener input VR ketika object aktif
+        // [EN] Enable VR input listener when this object becomes active
         if (selectAction != null)
             selectAction.action.started += OnTriggerPressed;
     }
 
     private void OnDisable()
     {
+        // [ID] Lepaskan listener VR untuk mencegah memory leak
+        // [EN] Remove VR listener to avoid memory leaks
         if (selectAction != null)
             selectAction.action.started -= OnTriggerPressed;
     }

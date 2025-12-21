@@ -67,8 +67,8 @@ public class CurvedUIVRButtonHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        // [ID] Mendaftarkan event listener saat tombol Trigger (Select) ditekan
-        // [EN] Register event listener when Trigger (Select) button is pressed
+        // [ID] Aktifkan listener input VR ketika object aktif
+        // [EN] Enable VR input listener when this object becomes active
         if (interactable != null)
         {
             interactable.selectEntered.AddListener(OnVRTriggerPressed);

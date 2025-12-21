@@ -55,6 +55,8 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
 
     private void OnDisable()
     {
+        // [ID] Lepaskan listener VR untuk mencegah memory leak
+        // [EN] Remove VR listener to avoid memory leaks
         if (selectAction != null)
         {
             selectAction.action.started -= OnDragStarted;

@@ -11,6 +11,8 @@ public class DebugUIController : MonoBehaviour
     [SerializeField] private GameObject curved_ui_slider_panel;
     [SerializeField] private GameObject curved_ui_scrollbar_panel;
     [SerializeField] private GameObject curved_ui_dropdown_panel;
+    // Hapus
+    [SerializeField] private GameObject curved_ui_scrollview2_panel;
 
     [Header("VR Input")]
     [SerializeField] private InputActionReference vrInput; // [ID] Input VR yang akan dipakai untuk mendeteksi klik/trigger dalam VR
@@ -29,6 +31,13 @@ public class DebugUIController : MonoBehaviour
     [SerializeField] private GameObject scrollbarB;
     [SerializeField] private GameObject scrollbarC;
     [SerializeField] private GameObject scrollbarD;
+    [SerializeField] private GameObject scrollviewA;
+    [SerializeField] private GameObject scrollviewB;
+    [SerializeField] private GameObject scrollviewC;
+    [SerializeField] private GameObject scrollviewD;
+    // Hapus
+    [SerializeField] private GameObject scrollviewA2;
+    [SerializeField] private GameObject scrollviewB2;
 
     private int index = 1;
 
@@ -59,6 +68,8 @@ public class DebugUIController : MonoBehaviour
         curved_ui_slider_panel.SetActive(false);
         curved_ui_scrollbar_panel.SetActive(false);
         curved_ui_dropdown_panel.SetActive(false);
+        // Hapus
+        curved_ui_scrollview2_panel.SetActive(false);
 
         buttonA.SetActive(true);
         buttonB.SetActive(true);
@@ -72,6 +83,13 @@ public class DebugUIController : MonoBehaviour
         scrollbarB.SetActive(false);
         scrollbarC.SetActive(false);
         scrollbarD.SetActive(false);
+        scrollviewA.SetActive(false);
+        scrollviewB.SetActive(false);
+        scrollviewC.SetActive(false);
+        scrollviewD.SetActive(false);
+        // Hapus
+        scrollviewA2.SetActive(false);
+        scrollviewB2.SetActive(false);
     }
 
     private void OnVRPressed(InputAction.CallbackContext ctx)
@@ -89,7 +107,8 @@ public class DebugUIController : MonoBehaviour
     private void ShowUI()
     {
         index++;
-        if (index > 8) index = 1;
+        //if (index > 8) index = 1;
+        if (index > 9) index = 1;
 
         // Nonaktifkan semua panel dulu
         curved_ui_button_panel.SetActive(false);
@@ -99,6 +118,8 @@ public class DebugUIController : MonoBehaviour
         curved_ui_slider_panel.SetActive(false);
         curved_ui_scrollbar_panel.SetActive(false);
         curved_ui_dropdown_panel.SetActive(false);
+        // Hapus
+        curved_ui_scrollview2_panel.SetActive(false);
 
         switch (index)
         {
@@ -115,6 +136,13 @@ public class DebugUIController : MonoBehaviour
                 scrollbarB.SetActive(false);
                 scrollbarC.SetActive(false);
                 scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
 
                 curved_ui_button_panel.SetActive(true);
                 Debug.Log("Show Button Panel");
@@ -138,12 +166,39 @@ public class DebugUIController : MonoBehaviour
                 scrollbarB.SetActive(false);
                 scrollbarC.SetActive(false);
                 scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
 
                 curved_ui_toggle_panel.SetActive(true);
                 Debug.Log("Show Toggle Panel");
                 break;
 
             case 4:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(true);
+                scrollviewB.SetActive(true);
+                scrollviewC.SetActive(true);
+                //scrollviewD.SetActive(true);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
+
                 curved_ui_scrollview_panel.SetActive(true);
                 Debug.Log("Show ScrollView Panel");
                 break;
@@ -161,6 +216,13 @@ public class DebugUIController : MonoBehaviour
                 scrollbarB.SetActive(false);
                 scrollbarC.SetActive(false);
                 scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
 
                 curved_ui_slider_panel.SetActive(true);
                 Debug.Log("Show Slider Panel");
@@ -179,6 +241,13 @@ public class DebugUIController : MonoBehaviour
                 scrollbarB.SetActive(true);
                 scrollbarC.SetActive(true);
                 scrollbarD.SetActive(true);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
 
                 curved_ui_scrollbar_panel.SetActive(true);
                 Debug.Log("Show Scrollbar Panel");
@@ -197,9 +266,41 @@ public class DebugUIController : MonoBehaviour
                 scrollbarB.SetActive(false);
                 scrollbarC.SetActive(false);
                 scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(false);
+                scrollviewB2.SetActive(false);
 
                 curved_ui_dropdown_panel.SetActive(true);
                 Debug.Log("Show Dropdown Panel");
+                break;
+
+            case 8:
+                buttonA.SetActive(false);
+                buttonB.SetActive(false);
+                toggleA.SetActive(false);
+                toggleB.SetActive(false);
+                sliderA.SetActive(false);
+                sliderB.SetActive(false);
+                sliderC.SetActive(false);
+                sliderD.SetActive(false);
+                scrollbarA.SetActive(false);
+                scrollbarB.SetActive(false);
+                scrollbarC.SetActive(false);
+                scrollbarD.SetActive(false);
+                //scrollviewA.SetActive(false);
+                scrollviewB.SetActive(false);
+                scrollviewC.SetActive(false);
+                //scrollviewD.SetActive(false);
+                // Hapus
+                scrollviewA2.SetActive(true);
+                scrollviewB2.SetActive(true);
+
+                curved_ui_scrollview2_panel.SetActive(true);
+                Debug.Log("Show Scrollbar Panel");
                 break;
         }
     }

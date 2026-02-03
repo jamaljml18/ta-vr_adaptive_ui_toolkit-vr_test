@@ -82,21 +82,37 @@ public class SpatialUIController : MonoBehaviour
 
     }
 
+    //private void Start()
+    //{
+    //    // [ID] Jika kamera tidak diassign, gunakan Main Camera
+    //    // [EN] If cameraTransform is not assigned, automatically use Main Camera
+    //    if (cameraTransform == null)
+    //    {
+    //        cameraTransform = Camera.main.transform;
+    //    }
+    //    // [ID] Simpan offset awal UI berdasarkan posisi dunia (world position).
+    //    // [EN] This stores the initial UI offset based on its current world position.
+    //    distanceX = transform.position.x;
+    //    distanceY = transform.position.y;
+    //    distanceZ = transform.position.z;
+    //    // [ID] Set posisi awal secara instan agar tidak melompat dari jauh
+    //    // [EN] Set initial position instantly to avoid visual popping
+    //    UpdatePosition(true);
+    //}
+
     private void Start()
     {
-        // [ID] Jika kamera tidak diassign, gunakan Main Camera
-        // [EN] If cameraTransform is not assigned, automatically use Main Camera
-        if (cameraTransform == null)
-        {
-            cameraTransform = Camera.main.transform;
-        }
-        // [ID] Simpan offset awal UI berdasarkan posisi dunia (world position).
-        // [EN] This stores the initial UI offset based on its current world position.
-        distanceX = transform.position.x;
-        distanceY = transform.position.y;
-        distanceZ = transform.position.z;
-        // [ID] Set posisi awal secara instan agar tidak melompat dari jauh
-        // [EN] Set initial position instantly to avoid visual popping
+        if (cameraTransform == null) cameraTransform = Camera.main.transform;
+
+        // [PENTING] Ini adalah cara melakukan 'pengurangan' yang benar:
+        // Menghitung posisi UI relatif terhadap kamera (Local Offset).
+        Vector3 relativeVector = cameraTransform.InverseTransformPoint(transform.position);
+
+        // Sekarang kita simpan hasil 'pengurangan' tersebut ke variabel distance
+        distanceX = relativeVector.x;
+        distanceY = relativeVector.y;
+        distanceZ = relativeVector.z;
+
         UpdatePosition(true);
     }
 

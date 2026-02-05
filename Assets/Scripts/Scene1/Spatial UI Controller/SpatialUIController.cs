@@ -92,9 +92,14 @@ public class SpatialUIController : MonoBehaviour
         }
         // [ID] Simpan offset awal UI berdasarkan posisi dunia (world position).
         // [EN] This stores the initial UI offset based on its current world position.
-        distanceX = transform.position.x;
-        distanceY = transform.position.y;
-        distanceZ = transform.position.z;
+        //distanceX = transform.position.x;
+        //distanceY = transform.position.y;
+        //distanceZ = transform.position.z;
+
+        Vector3 relativeVector = cameraTransform.InverseTransformPoint(transform.position);
+        distanceX = relativeVector.x;
+        distanceY = relativeVector.y;
+        distanceZ = relativeVector.z;
         // [ID] Set posisi awal secara instan agar tidak melompat dari jauh
         // [EN] Set initial position instantly to avoid visual popping
         UpdatePosition(true);

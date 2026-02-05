@@ -1,96 +1,117 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.EventSystems;
+using System.Collections;
 
-/// <summary>
-/// [ID] Menangani interaksi VR InputField menggunakan Box Collider.
-/// Memicu fokus input dan membuka keyboard sistem (TouchScreenKeyboard) saat diklik.
-/// 
-/// [EN] Handles VR InputField interaction using a Box Collider.
-/// Triggers input focus and opens the system keyboard (TouchScreenKeyboard) when clicked.
-/// </summary>
 public class CurvedPhysicalUIInputFieldHandler : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("[ID] Referensi ke komponen TMP InputField.\n[EN] Reference to the TMP InputField component.")]
     public TMP_InputField inputField;
-
-    [Tooltip("[ID] Collider yang menutupi area Input Field.\n[EN] Collider covering the Input Field area.")]
     public BoxCollider inputCollider;
 
     [Header("VR Settings")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [SerializeField] private UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rayInteractor;
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference selectAction;
 
     [Header("Keyboard Settings")]
-    [Tooltip("[ID] Apakah ingin membuka keyboard virtual secara otomatis (Android/Oculus).\n[EN] Whether to open the virtual keyboard automatically (Android/Oculus).")]
     public bool openTouchKeyboard = true;
+
+    // [ID] Coba ganti ke ASCIICapable jika Default tidak muncul di Pico
+    public TouchScreenKeyboardType keyboardType = TouchScreenKeyboardType.ASCIICapable;
 
     private TouchScreenKeyboard virtualKeyboard;
 
+    private void Start()
+    {
+        if (inputField != null)
+        {
+            // [ID] PENTING: Matikan input mobile bawaan TMP sepenuhnya
+            inputField.shouldHideMobileInput = true;
+        }
+    }
+
     private void OnEnable()
     {
-        if (selectAction != null)
-            selectAction.action.started += OnSelect;
+        if (selectAction != null) selectAction.action.started += OnSelect;
     }
 
     private void OnDisable()
     {
-        if (selectAction != null)
-            selectAction.action.started -= OnSelect;
+        if (selectAction != null) selectAction.action.started -= OnSelect;
     }
 
     private void OnSelect(InputAction.CallbackContext ctx)
     {
         if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
-            // [ID] Cek apakah collider yang diklik adalah milik InputField ini.
-            // [EN] Check if the clicked collider belongs to this InputField.
             if (hit.collider == inputCollider)
             {
-                ActivateInput();
+                StartCoroutine(ForceOpenKeyboard());
             }
         }
     }
 
-    private void ActivateInput()
+    private IEnumerator ForceOpenKeyboard()
     {
-        if (inputField == null) return;
+        if (inputField == null) yield break;
 
-        // [ID] 1. Berikan fokus secara programatik ke InputField.
-        // [EN] 1. Programmatically give focus to the InputField.
-        inputField.ActivateInputField();
-        inputField.Select();
+        // [ID] 1. Visual Focus (Agar kursor berkedip di Render Texture)
+        EventSystem.current.SetSelectedGameObject(inputField.gameObject);
+        inputField.ActivateInputField(); // Visual cursor blink
 
-        // [ID] 2. Tangani pemunculan keyboard.
-        // [EN] 2. Handle keyboard appearance.
+        yield return new WaitForEndOfFrame(); // Tunggu frame selesai
+
+        // [ID] 2. Buka Keyboard Secara Paksa dengan Parameter Lengkap
         if (openTouchKeyboard)
         {
-            // [ID] TouchScreenKeyboard.Open berfungsi untuk memicu keyboard bawaan (Meta Quest/Pico/Android).
-            // [EN] TouchScreenKeyboard.Open triggers the native keyboard (Meta Quest/Pico/Android).
-            virtualKeyboard = TouchScreenKeyboard.Open(inputField.text, TouchScreenKeyboardType.Default);
-        }
+            // Reset keyboard jika sudah terbuka
+            if (virtualKeyboard != null)
+            {
+                virtualKeyboard.active = false;
+                virtualKeyboard = null;
+            }
 
-        Debug.Log($"[InputField] {inputField.name} Activated");
+            // [PENTING UNTUK PICO/ANDROID]
+            // Parameter: (text, type, autocorrection, multiline, secure, alert, placeholder)
+            // Kadang Pico butuh parameter ini didefinisikan eksplisit.
+            virtualKeyboard = TouchScreenKeyboard.Open(
+                inputField.text,
+                keyboardType,
+                false, // autocorrection
+                inputField.lineType != TMP_InputField.LineType.SingleLine, // multiline support
+                inputField.contentType == TMP_InputField.ContentType.Password, // secure/password
+                false, // alert
+                inputField.placeholder.GetComponent<TMP_Text>().text // placeholder
+            );
+
+            Debug.Log($"[Pico Fix] Request Open Keyboard. Supported: {TouchScreenKeyboard.isSupported}");
+        }
     }
 
     private void Update()
     {
-        // [ID] Update teks InputField secara real-time dari keyboard virtual jika sedang aktif.
-        // [EN] Update InputField text in real-time from the virtual keyboard if active.
+        // [ID] Logic sinkronisasi (Sama seperti sebelumnya, ini sudah benar)
         if (virtualKeyboard != null && virtualKeyboard.active)
         {
-            inputField.text = virtualKeyboard.text;
+            if (inputField.text != virtualKeyboard.text)
+            {
+                inputField.text = virtualKeyboard.text;
+
+                // [ID] Paksa update visual input field agar terlihat di Render Texture
+                inputField.ForceLabelUpdate();
+            }
+        }
+
+        if (virtualKeyboard != null && virtualKeyboard.status == TouchScreenKeyboard.Status.Done)
+        {
+            inputField.DeactivateInputField();
+            virtualKeyboard = null;
         }
     }
 
-    // ==========================================
-    // GIZMOS
-    // ==========================================
     private void OnDrawGizmosSelected()
     {
         if (inputCollider != null)

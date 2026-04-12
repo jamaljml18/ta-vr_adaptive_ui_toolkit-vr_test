@@ -1,0 +1,158 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+
+/// <summary>
+/// [ID] Menangani interaksi VR tombol menggunakan pendekatan "Physical Proxy" untuk Hand Tracking.
+/// Memetakan Collider 3D fisik ke Tombol UI Canvas secara manual untuk DUA TANGAN.
+/// Kompatibel dengan arsitektur XR Interaction Toolkit (XRI) 3.0+.
+/// 
+/// [EN] Handles VR button interaction using the "Physical Proxy" approach for Hand Tracking.
+/// Maps physical 3D Colliders to Canvas UI Buttons manually for BOTH HANDS.
+/// Compatible with XR Interaction Toolkit (XRI) 3.0+ architecture.
+/// </summary>
+public class CurvedPhysicalUIButtonHandlerHT : MonoBehaviour
+{
+    [Header("Mapping Configuration")]
+    [Tooltip("[ID] Daftar Collider 3D transparan yang dipasang di atas mesh UI.\n[EN] List of transparent 3D Colliders placed over the UI mesh.")]
+    public Collider[] buttonBoxColliders;
+
+    [Tooltip("[ID] Daftar Button UI yang sesuai dengan urutan Collider di atas.\n[EN] List of UI Buttons corresponding to the order of Colliders above.")]
+    public Button[] canvasButtons;
+
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
+
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions (XRI 3.0+)")]
+    [Tooltip("[ID] Input Action untuk cubitan kiri (Contoh: XRI LeftHand Interaction/Select).\n[EN] Input Action for Left pinch (Example: XRI LeftHand Interaction/Select).")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk cubitan kanan (Contoh: XRI RightHand Interaction/Select).\n[EN] Input Action for Right pinch (Example: XRI RightHand Interaction/Select).")]
+    [SerializeField] private InputActionReference rightSelectAction;
+
+    [Header("Debug")]
+    [SerializeField] private bool showDebug = true;
+
+    private void Start()
+    {
+        // [ID] Validasi: Pastikan jumlah collider dan tombol sama
+        // [EN] Validation: Ensure the count of colliders and buttons matches
+        if (buttonBoxColliders.Length != canvasButtons.Length)
+        {
+            Debug.LogError($"[PhysicalUI] Mismatch! Colliders: {buttonBoxColliders.Length}, Buttons: {canvasButtons.Length}. Please fix in Inspector.");
+        }
+    }
+
+    private void OnEnable()
+    {
+        // [ID] Daftarkan dan aktifkan listener untuk cubitan Kiri
+        // [EN] Register and enable listener for Left pinch
+        if (leftSelectAction != null && leftSelectAction.action != null)
+        {
+            // [ID] Wajib di XRI 3.0+ agar input selalu aktif membaca Hand Tracking
+            // [EN] Mandatory in XRI 3.0+ to ensure input actively reads Hand Tracking
+            leftSelectAction.action.Enable();
+            leftSelectAction.action.started += OnLeftTriggerPressed;
+        }
+
+        // [ID] Daftarkan dan aktifkan listener untuk cubitan Kanan
+        // [EN] Register and enable listener for Right pinch
+        if (rightSelectAction != null && rightSelectAction.action != null)
+        {
+            rightSelectAction.action.Enable();
+            rightSelectAction.action.started += OnRightTriggerPressed;
+        }
+    }
+
+    private void OnDisable()
+    {
+        // [ID] Lepaskan listener VR untuk mencegah memory leak saat script mati
+        // [EN] Remove VR listeners to prevent memory leaks when script is disabled
+        if (leftSelectAction != null && leftSelectAction.action != null)
+        {
+            leftSelectAction.action.started -= OnLeftTriggerPressed;
+        }
+
+        if (rightSelectAction != null && rightSelectAction.action != null)
+        {
+            rightSelectAction.action.started -= OnRightTriggerPressed;
+        }
+    }
+
+    // ==========================================
+    // LOGIC UTAMA / MAIN LOGIC
+    // ==========================================
+
+    private void OnLeftTriggerPressed(InputAction.CallbackContext ctx)
+    {
+        if (leftRayInteractor != null)
+        {
+            if (showDebug) Debug.Log("[PhysicalUI] Tangan Kiri mencubit! / Left hand pinched!");
+            CheckAndClick(leftRayInteractor);
+        }
+    }
+
+    private void OnRightTriggerPressed(InputAction.CallbackContext ctx)
+    {
+        if (rightRayInteractor != null)
+        {
+            if (showDebug) Debug.Log("[PhysicalUI] Tangan Kanan mencubit! / Right hand pinched!");
+            CheckAndClick(rightRayInteractor);
+        }
+    }
+
+    private void CheckAndClick(XRRayInteractor interactor)
+    {
+        // [ID] 1. Minta data Raycast Hit dari Interactor saat terjadi cubitan
+        // [EN] 1. Request Raycast Hit data from the Interactor when a pinch occurs
+        if (interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        {
+            // [ID] 2. Cari index collider yang tertabrak di dalam array
+            // [EN] 2. Find the index of the hit collider within the array
+            int index = Array.IndexOf(buttonBoxColliders, hit.collider);
+
+            // [ID] Jika index ditemukan (bukan -1)
+            // [EN] If index is found (not -1)
+            if (index != -1)
+            {
+                // [ID] 3. Pastikan tombol UI di index tersebut ada/valid
+                // [EN] 3. Ensure the UI button at that index is present/valid
+                if (index < canvasButtons.Length && canvasButtons[index] != null)
+                {
+                    if (showDebug)
+                        Debug.Log($"[PhysicalUI] Kena Collider / Hit Collider [{index}] -> Mengklik UI: '{canvasButtons[index].name}'");
+
+                    // [ID] 4. Eksekusi fungsi OnClick pada tombol
+                    // [EN] 4. Execute the OnClick function on the button
+                    canvasButtons[index].onClick.Invoke();
+                }
+            }
+        }
+    }
+
+    // ==========================================
+    // VISUALISASI / VISUALIZATION
+    // ==========================================
+    private void OnDrawGizmosSelected()
+    {
+        if (buttonBoxColliders == null || canvasButtons == null) return;
+
+        Gizmos.color = Color.cyan; // [ID] Warna Cyan untuk penanda / [EN] Cyan color for indicator
+        for (int i = 0; i < buttonBoxColliders.Length; i++)
+        {
+            if (i < canvasButtons.Length && buttonBoxColliders[i] != null && canvasButtons[i] != null)
+            {
+                // [ID] Gambar garis penghubung visual antara Collider fisik dan Tombol UI
+                // [EN] Draw a visual connecting line between physical Collider and UI Button
+                Gizmos.DrawLine(buttonBoxColliders[i].transform.position, canvasButtons[i].transform.position);
+            }
+        }
+    }
+}

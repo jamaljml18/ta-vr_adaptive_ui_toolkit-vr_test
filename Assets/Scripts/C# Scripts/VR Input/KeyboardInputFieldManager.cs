@@ -5,8 +5,11 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 /// <summary>
-/// [ID] Manajer utama untuk Keyboard 3D kustom di antarmuka VR. Menangani logika pengetikan menggunakan raycast pada Collider tombol 3D.
-/// [EN] Main manager for the custom 3D Keyboard in VR interface. Handles typing logic using raycasts on 3D button Colliders.
+/// [ID] Manajer utama untuk Keyboard 3D kustom di antarmuka VR. 
+/// Mendukung DUA TANGAN. Menangani logika pengetikan menggunakan raycast pada Collider tombol 3D.
+/// 
+/// [EN] Main manager for the custom 3D Keyboard in VR interface. 
+/// Supports BOTH HANDS. Handles typing logic using raycasts on 3D button Colliders.
 /// </summary>
 public class KeyboardInputFieldManager : MonoBehaviour
 {
@@ -50,12 +53,19 @@ public class KeyboardInputFieldManager : MonoBehaviour
     [Tooltip("[ID] Masukkan parent (Wadah utama) dari seluruh visual keyboard agar bisa diaktifkan/dinonaktifkan.\n[EN] Insert the parent container of all keyboard visuals so it can be toggled on/off.")]
     public GameObject keyboardVisualContainer;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke komponen Ray Interactor VR (biasanya terpasang di tangan dominan).\n[EN] Reference to the VR Ray Interactor component (usually attached to the dominant hand).")]
-    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor leftRayInteractor;
 
-    [Tooltip("[ID] Input Action dari kontroler VR untuk melakukan klik/pilih.\n[EN] VR controller Input Action for clicking/selecting.")]
-    public InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action dari kontroler Kiri untuk melakukan klik/pilih.\n[EN] Left VR controller Input Action for clicking/selecting.")]
+    public InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action dari kontroler Kanan untuk melakukan klik/pilih.\n[EN] Right VR controller Input Action for clicking/selecting.")]
+    public InputActionReference rightSelectAction;
 
     [Header("Keyboard Keys Mapping")]
     [Tooltip("[ID] Daftar pemetaan setiap collider tombol fisik ke fungsinya masing-masing.\n[EN] List mapping each physical key collider to its respective function.")]
@@ -83,26 +93,24 @@ public class KeyboardInputFieldManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // [ID] Daftarkan event listener untuk menangkap input klik dari VR controller.
-        // [EN] Register the event listener to catch click inputs from the VR controller.
-        if (selectAction != null) selectAction.action.started += OnSelect;
+        // [ID] Daftarkan event listener untuk menangkap input klik dari KEDUA VR controller.
+        // [EN] Register the event listeners to catch click inputs from BOTH VR controllers.
+        if (leftSelectAction != null) leftSelectAction.action.started += OnLeftSelect;
+        if (rightSelectAction != null) rightSelectAction.action.started += OnRightSelect;
     }
 
     private void OnDisable()
     {
         // [ID] Lepaskan event listener saat script dinonaktifkan untuk mencegah memory leak.
-        // [EN] Unregister the event listener when the script is disabled to prevent memory leaks.
-        if (selectAction != null) selectAction.action.started -= OnSelect;
+        // [EN] Unregister the event listeners when the script is disabled to prevent memory leaks.
+        if (leftSelectAction != null) leftSelectAction.action.started -= OnLeftSelect;
+        if (rightSelectAction != null) rightSelectAction.action.started -= OnRightSelect;
     }
 
     // ==========================================
     // FUNGSI BUKA TUTUP / OPEN & CLOSE FUNCTIONS
     // ==========================================
 
-    /// <summary>
-    /// [ID] Menampilkan keyboard dan menetapkan target Input Field yang akan menerima teks.
-    /// [EN] Displays the keyboard and sets the target Input Field that will receive text.
-    /// </summary>
     public void OpenKeyboard(TMP_InputField newTarget)
     {
         targetInputField = newTarget;
@@ -118,10 +126,6 @@ public class KeyboardInputFieldManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// [ID] Menyembunyikan keyboard dan melepaskan fokus dari Input Field.
-    /// [EN] Hides the keyboard and removes focus from the Input Field.
-    /// </summary>
     public void CloseKeyboard()
     {
         if (keyboardVisualContainer != null)
@@ -142,11 +146,14 @@ public class KeyboardInputFieldManager : MonoBehaviour
     // LOGIKA UTAMA / MAIN LOGIC
     // ==========================================
 
+    private void OnLeftSelect(InputAction.CallbackContext ctx) => ProcessSelection(leftRayInteractor);
+    private void OnRightSelect(InputAction.CallbackContext ctx) => ProcessSelection(rightRayInteractor);
+
     /// <summary>
-    /// [ID] Dipanggil saat pemain menekan tombol trigger/pilih di controller VR.
-    /// [EN] Called when the player presses the trigger/select button on the VR controller.
+    /// [ID] Dipanggil saat pemain menekan tombol trigger dari salah satu controller VR.
+    /// [EN] Called when the player presses the trigger button from either VR controller.
     /// </summary>
-    private void OnSelect(InputAction.CallbackContext ctx)
+    private void ProcessSelection(UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor interactor)
     {
         // [ID] Abaikan input jika tidak ada target atau jika keyboard sedang tertutup.
         // [EN] Ignore input if there is no target or if the keyboard is currently closed.
@@ -154,7 +161,7 @@ public class KeyboardInputFieldManager : MonoBehaviour
 
         // [ID] Periksa apakah tembakan laser (raycast) VR mengenai suatu objek 3D.
         // [EN] Check if the VR raycast hits a 3D object.
-        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        if (interactor != null && interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
             // [ID] Cari tombol mana yang cocok dengan objek yang terkena raycast.
             // [EN] Find which key matches the object hit by the raycast.
@@ -325,14 +332,14 @@ public class KeyboardInputFieldManager : MonoBehaviour
             case "=": return "+";
             case "[": return "{";
             case "]": return "}";
-            case "\\": return "|"; // [ID] Garis miring terbalik menjadi Pipa vertikal / [EN] Backslash to Pipe
+            case "\\": return "|";
             case ";": return ":";
             case "'": return "\"";
             case ",": return "<";
             case ".": return ">";
             case "/": return "?";
-            case "`": return "~"; // [ID] Tombol Tilde / [EN] Tilde key
-            default: return baseChar; // [ID] Kembalikan aslinya jika tidak terdaftar / [EN] Return original if not listed
+            case "`": return "~";
+            default: return baseChar;
         }
     }
 }

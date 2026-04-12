@@ -7,10 +7,10 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
 /// [ID] Menangani interaksi VR tombol menggunakan pendekatan "Physical Proxy".
-/// Memetakan Collider 3D fisik ke Tombol UI Canvas secara manual.
+/// Memetakan Collider 3D fisik ke Tombol UI Canvas secara manual untuk DUA TANGAN.
 /// 
 /// [EN] Handles VR button interaction using the "Physical Proxy" approach.
-/// Maps physical 3D Colliders to Canvas UI Buttons manually.
+/// Maps physical 3D Colliders to Canvas UI Buttons manually for BOTH HANDS.
 /// </summary>
 public class CurvedPhysicalUIButtonHandler : MonoBehaviour
 {
@@ -21,13 +21,19 @@ public class CurvedPhysicalUIButtonHandler : MonoBehaviour
     [Tooltip("[ID] Daftar Button UI yang sesuai dengan urutan Collider di atas.\n[EN] List of UI Buttons corresponding to the order of Colliders above.")]
     public Button[] canvasButtons;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor (biasanya di tangan kiri/kanan).\n[EN] Reference to the Ray Interactor (usually on left/right hand).")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
 
-    [Header("Input Action")]
-    [Tooltip("[ID] Input Action untuk trigger/klik (contoh: XRI LeftHand Interaction/Select).\n[EN] Input Action for trigger/click (e.g., XRI LeftHand Interaction/Select).")]
-    [SerializeField] private InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action untuk trigger/klik Kiri (XRI LeftHand Interaction/Select).\n[EN] Input Action for Left trigger/click.")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk trigger/klik Kanan (XRI RightHand Interaction/Select).\n[EN] Input Action for Right trigger/click.")]
+    [SerializeField] private InputActionReference rightSelectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
@@ -44,28 +50,45 @@ public class CurvedPhysicalUIButtonHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        // [ID] Aktifkan listener input VR ketika object aktif
-        // [EN] Enable VR input listener when this object becomes active
-        if (selectAction != null)
-            selectAction.action.started += OnTriggerPressed;
+        // [ID] Aktifkan listener input VR untuk kedua tangan
+        // [EN] Enable VR input listeners for both hands
+        if (leftSelectAction != null)
+            leftSelectAction.action.started += OnLeftTriggerPressed;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started += OnRightTriggerPressed;
     }
 
     private void OnDisable()
     {
         // [ID] Lepaskan listener VR untuk mencegah memory leak
-        // [EN] Remove VR listener to avoid memory leaks
-        if (selectAction != null)
-            selectAction.action.started -= OnTriggerPressed;
+        // [EN] Remove VR listeners to avoid memory leaks
+        if (leftSelectAction != null)
+            leftSelectAction.action.started -= OnLeftTriggerPressed;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started -= OnRightTriggerPressed;
     }
 
     // ==========================================
     // LOGIC UTAMA / MAIN LOGIC
     // ==========================================
-    private void OnTriggerPressed(InputAction.CallbackContext ctx)
+
+    private void OnLeftTriggerPressed(InputAction.CallbackContext ctx)
     {
-        if (rayInteractor != null)
+        if (leftRayInteractor != null)
         {
-            CheckAndClick(rayInteractor);
+            if (showDebug) Debug.Log("[PhysicalUI] Left hand trigger pressed.");
+            CheckAndClick(leftRayInteractor);
+        }
+    }
+
+    private void OnRightTriggerPressed(InputAction.CallbackContext ctx)
+    {
+        if (rightRayInteractor != null)
+        {
+            if (showDebug) Debug.Log("[PhysicalUI] Right hand trigger pressed.");
+            CheckAndClick(rightRayInteractor);
         }
     }
 
@@ -88,7 +111,7 @@ public class CurvedPhysicalUIButtonHandler : MonoBehaviour
                 if (index < canvasButtons.Length && canvasButtons[index] != null)
                 {
                     if (showDebug)
-                        Debug.Log($"[PhysicalUI] Hit Collider [{index}]: '{hit.collider.name}' -> Clicking Button: '{canvasButtons[index].name}'");
+                        Debug.Log($"[PhysicalUI] Hit Collider [{index}]: '{hit.collider.name}' via {interactor.name} -> Clicking Button: '{canvasButtons[index].name}'");
 
                     // [ID] 4. Eksekusi fungsi OnClick pada tombol
                     // [EN] 4. Execute the OnClick function on the button

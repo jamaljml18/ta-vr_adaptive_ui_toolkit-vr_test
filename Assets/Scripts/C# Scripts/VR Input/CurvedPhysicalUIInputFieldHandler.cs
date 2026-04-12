@@ -5,7 +5,10 @@ using UnityEngine.EventSystems;
 
 /// <summary>
 /// [ID] Menangani interaksi VR untuk Input Field menggunakan Keyboard 3D Kustom.
+/// Mendukung DUA TANGAN.
+/// 
 /// [EN] Handles VR interaction for the Input Field using a Custom 3D Keyboard.
+/// Supports BOTH HANDS.
 /// </summary>
 public class CurvedPhysicalUIInputFieldHandler : MonoBehaviour
 {
@@ -19,12 +22,19 @@ public class CurvedPhysicalUIInputFieldHandler : MonoBehaviour
     [Tooltip("[ID] Collider fisik yang mewakili area Input Field.\n[EN] Physical Collider representing the Input Field area.")]
     public BoxCollider inputCollider;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor VR.\n[EN] Reference to the VR Ray Interactor.")]
-    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor leftRayInteractor;
 
-    [Tooltip("[ID] Action trigger dari VR Controller.\n[EN] Trigger action from the VR Controller.")]
-    public InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Action trigger dari VR Controller Kiri.\n[EN] Trigger action from the Left VR Controller.")]
+    public InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Action trigger dari VR Controller Kanan.\n[EN] Trigger action from the Right VR Controller.")]
+    public InputActionReference rightSelectAction;
 
     [Header("Custom Keyboard Link")]
     [Tooltip("[ID] Masukkan GameObject yang memiliki script KeyboardInputFieldManager.\n[EN] Insert the GameObject containing the KeyboardInputFieldManager script.")]
@@ -46,20 +56,30 @@ public class CurvedPhysicalUIInputFieldHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (selectAction != null) selectAction.action.started += OnSelect;
+        // [ID] Daftarkan listener untuk kedua tangan
+        // [EN] Register listeners for both hands
+        if (leftSelectAction != null) leftSelectAction.action.started += OnLeftSelect;
+        if (rightSelectAction != null) rightSelectAction.action.started += OnRightSelect;
     }
 
     private void OnDisable()
     {
-        if (selectAction != null) selectAction.action.started -= OnSelect;
+        // [ID] Lepaskan listener untuk kedua tangan
+        // [EN] Remove listeners for both hands
+        if (leftSelectAction != null) leftSelectAction.action.started -= OnLeftSelect;
+        if (rightSelectAction != null) rightSelectAction.action.started -= OnRightSelect;
     }
 
     // ==========================================
     // LOGIC UTAMA / MAIN LOGIC
     // ==========================================
-    private void OnSelect(InputAction.CallbackContext ctx)
+
+    private void OnLeftSelect(InputAction.CallbackContext ctx) => ProcessSelection(leftRayInteractor);
+    private void OnRightSelect(InputAction.CallbackContext ctx) => ProcessSelection(rightRayInteractor);
+
+    private void ProcessSelection(UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor interactor)
     {
-        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        if (interactor != null && interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
             if (hit.collider == inputCollider)
             {

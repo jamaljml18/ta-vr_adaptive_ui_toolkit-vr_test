@@ -8,10 +8,10 @@ using TMPro;
 
 /// <summary>
 /// [ID] Menangani interaksi VR Dropdown menggunakan dua collider (Header dan List).
-/// Menghitung indeks item berdasarkan posisi Y lokal pada List Collider.
+/// Mendukung DUA TANGAN. Menghitung indeks item berdasarkan posisi Y lokal pada List Collider.
 /// 
 /// [EN] Handles VR Dropdown interaction using two colliders (Header and List).
-/// Calculates item index based on the local Y position on the List Collider.
+/// Supports BOTH HANDS. Calculates item index based on the local Y position on the List Collider.
 /// </summary>
 public class CurvedPhysicalUIDropdownHandler : MonoBehaviour
 {
@@ -25,23 +25,32 @@ public class CurvedPhysicalUIDropdownHandler : MonoBehaviour
     [Tooltip("[ID] Collider besar yang menutupi area daftar (Template).\n[EN] Large collider covering the list area (Template).")]
     public BoxCollider listCollider;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
 
-    [Header("Input Action")]
-    [Tooltip("[ID] Input Action untuk klik/pilih.\n[EN] Input Action for click/select.")]
-    [SerializeField] private InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action untuk klik/pilih Kiri.\n[EN] Input Action for Left click/select.")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk klik/pilih Kanan.\n[EN] Input Action for Right click/select.")]
+    [SerializeField] private InputActionReference rightSelectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = false;
 
     private void OnEnable()
     {
-        if (selectAction != null)
-        {
-            selectAction.action.started += OnSelect;
-        }
+        // [ID] Aktifkan listener input VR untuk kedua tangan
+        // [EN] Enable VR input listeners for both hands
+        if (leftSelectAction != null)
+            leftSelectAction.action.started += OnLeftSelect;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started += OnRightSelect;
 
         // [ID] Sembunyikan collider list saat awal agar tidak menghalangi raycast lain.
         // [EN] Hide the list collider at start so it doesn't block other raycasts.
@@ -51,23 +60,31 @@ public class CurvedPhysicalUIDropdownHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        if (selectAction != null)
-        {
-            selectAction.action.started -= OnSelect;
-        }
+        // [ID] Lepaskan listener VR
+        // [EN] Remove VR listeners
+        if (leftSelectAction != null)
+            leftSelectAction.action.started -= OnLeftSelect;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started -= OnRightSelect;
     }
 
     // ============================================================
     // INPUT EVENTS
     // ============================================================
-    private void OnSelect(InputAction.CallbackContext ctx)
+    private void OnLeftSelect(InputAction.CallbackContext ctx) => ProcessSelect(leftRayInteractor);
+    private void OnRightSelect(InputAction.CallbackContext ctx) => ProcessSelect(rightRayInteractor);
+
+    private void ProcessSelect(XRRayInteractor interactor)
     {
-        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        if (interactor != null && interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
             // [ID] 1. Deteksi klik pada Header (Buka/Tutup Dropdown).
             // [EN] 1. Detect click on Header (Open/Close Dropdown).
             if (hit.collider == headerCollider)
             {
+                if (showDebug) Debug.Log($"[Dropdown] Header clicked via {interactor.name}");
+
                 if (!listCollider.gameObject.activeSelf)
                     OpenDropdown();
                 else
@@ -77,6 +94,7 @@ public class CurvedPhysicalUIDropdownHandler : MonoBehaviour
             // [EN] 2. Detect click on List area (Select Item).
             else if (hit.collider == listCollider)
             {
+                if (showDebug) Debug.Log($"[Dropdown] List item clicked via {interactor.name}");
                 ProcessListClick(hit.point);
             }
         }

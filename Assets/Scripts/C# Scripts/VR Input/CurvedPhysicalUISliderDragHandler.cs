@@ -7,10 +7,10 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
 /// [ID] Menangani interaksi VR Slider dengan fitur DRAG (Tahan dan Geser).
-/// Menggunakan Update loop untuk mengubah nilai slider secara real-time saat trigger ditahan.
+/// Mendukung DUA TANGAN. Menggunakan Update loop untuk mengubah nilai slider secara real-time.
 /// 
 /// [EN] Handles VR Slider interaction with DRAG feature (Hold and Slide).
-/// Uses Update loop to change slider value in real-time while trigger is held.
+/// Supports BOTH HANDS. Uses Update loop to change slider value in real-time.
 /// </summary>
 public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
 {
@@ -18,12 +18,19 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
     public BoxCollider[] sliderColliders;
     public Slider[] canvasSliders;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
 
-    [Header("Input Action")]
-    [SerializeField] private InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action untuk trigger/klik Kiri.\n[EN] Input Action for Left trigger/click.")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk trigger/klik Kanan.\n[EN] Input Action for Right trigger/click.")]
+    [SerializeField] private InputActionReference rightSelectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = false;
@@ -36,6 +43,10 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
     // [EN] Stores the index of the slider currently being moved
     private int activeSliderIndex = -1;
 
+    // [ID] Menyimpan Interactor mana (kiri/kanan) yang sedang aktif melakukan drag
+    // [EN] Stores which Interactor (left/right) is currently dragging
+    private XRRayInteractor activeInteractor = null;
+
     private void Start()
     {
         if (sliderColliders.Length != canvasSliders.Length)
@@ -44,12 +55,17 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (selectAction != null)
+        // [ID] Daftarkan event Started (Ditekan) dan Canceled (Dilepas) untuk kedua tangan
+        // [EN] Register Started (Pressed) and Canceled (Released) events for both hands
+        if (leftSelectAction != null)
         {
-            // [ID] Kita butuh dua event: Saat ditekan (Mulai) dan Saat dilepas (Berhenti)
-            // [EN] We need two events: When pressed (Start) and When released (Stop)
-            selectAction.action.started += OnDragStarted;
-            selectAction.action.canceled += OnDragEnded;
+            leftSelectAction.action.started += OnLeftDragStarted;
+            leftSelectAction.action.canceled += OnLeftDragEnded;
+        }
+        if (rightSelectAction != null)
+        {
+            rightSelectAction.action.started += OnRightDragStarted;
+            rightSelectAction.action.canceled += OnRightDragEnded;
         }
     }
 
@@ -57,10 +73,15 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
     {
         // [ID] Lepaskan listener VR untuk mencegah memory leak
         // [EN] Remove VR listener to avoid memory leaks
-        if (selectAction != null)
+        if (leftSelectAction != null)
         {
-            selectAction.action.started -= OnDragStarted;
-            selectAction.action.canceled -= OnDragEnded;
+            leftSelectAction.action.started -= OnLeftDragStarted;
+            leftSelectAction.action.canceled -= OnLeftDragEnded;
+        }
+        if (rightSelectAction != null)
+        {
+            rightSelectAction.action.started -= OnRightDragStarted;
+            rightSelectAction.action.canceled -= OnRightDragEnded;
         }
     }
 
@@ -68,33 +89,43 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
     // INPUT EVENTS (STATE MACHINE)
     // ============================================================
 
-    // [ID] 1. Saat Trigger Ditekan: Cek apakah kena slider? Jika ya, mulai Dragging.
-    // [EN] 1. When Trigger Pressed: Check if hitting slider? If yes, start Dragging.
-    private void OnDragStarted(InputAction.CallbackContext ctx)
+    private void OnLeftDragStarted(InputAction.CallbackContext ctx) => TryStartDrag(leftRayInteractor);
+    private void OnRightDragStarted(InputAction.CallbackContext ctx) => TryStartDrag(rightRayInteractor);
+
+    private void TryStartDrag(XRRayInteractor interactor)
     {
-        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        // [ID] Abaikan jika sedang melakukan drag dengan tangan yang lain
+        // [EN] Ignore if already dragging with the other hand
+        if (isDragging) return;
+
+        if (interactor != null && interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
-            // Cek apakah yang kena adalah salah satu collider slider kita
             int index = Array.IndexOf(sliderColliders, hit.collider);
 
             if (index != -1 && index < canvasSliders.Length)
             {
                 isDragging = true;
                 activeSliderIndex = index;
+                activeInteractor = interactor; // Simpan referensi tangan yang sedang drag
 
-                // [ID] Opsional: Update nilai sekali saat pertama ditekan (agar responsif)
-                // [EN] Optional: Update value once on first press (to be responsive)
                 UpdateSliderValue(hit.point);
             }
         }
     }
 
-    // [ID] 2. Saat Trigger Dilepas: Hentikan Dragging.
-    // [EN] 2. When Trigger Released: Stop Dragging.
-    private void OnDragEnded(InputAction.CallbackContext ctx)
+    private void OnLeftDragEnded(InputAction.CallbackContext ctx) => TryEndDrag(leftRayInteractor);
+    private void OnRightDragEnded(InputAction.CallbackContext ctx) => TryEndDrag(rightRayInteractor);
+
+    private void TryEndDrag(XRRayInteractor interactor)
     {
-        isDragging = false;
-        activeSliderIndex = -1;
+        // [ID] Hanya hentikan drag JIKA tangan yang dilepas adalah tangan yang sedang melakukan drag
+        // [EN] Only stop drag IF the released hand is the one currently dragging
+        if (isDragging && activeInteractor == interactor)
+        {
+            isDragging = false;
+            activeSliderIndex = -1;
+            activeInteractor = null; // Reset tangan yang aktif
+        }
     }
 
     // ============================================================
@@ -103,18 +134,14 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
 
     private void Update()
     {
-        // [ID] Jika sedang dragging DAN ada slider yang aktif
-        // [EN] If currently dragging AND there is an active slider
-        if (isDragging && activeSliderIndex != -1 && rayInteractor != null)
+        // [ID] Gunakan activeInteractor untuk mendapatkan posisi raycast
+        // [EN] Use activeInteractor to get the raycast position
+        if (isDragging && activeSliderIndex != -1 && activeInteractor != null)
         {
-            // [ID] Dapatkan posisi raycast terbaru setiap frame
-            // [EN] Get the latest raycast position every frame
-            if (rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+            if (activeInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
             {
                 // [ID] PENTING: Pastikan raycast masih mengenai collider slider yang sama
-                // Jika laser keluar dari kotak slider, kita berhenti update agar tidak error/lompat
                 // [EN] CRITICAL: Ensure raycast is still hitting the same slider collider
-                // If laser exits the slider box, we stop updating to prevent errors/jumping
                 if (hit.collider == sliderColliders[activeSliderIndex])
                 {
                     UpdateSliderValue(hit.point);
@@ -147,7 +174,7 @@ public class CurvedPhysicalUISliderDragHandler : MonoBehaviour
             uiSlider.value = newValue;
 
             if (showDebug)
-                Debug.Log($"[SliderDrag] Val: {newValue:F2}");
+                Debug.Log($"[SliderDrag] Val: {newValue:F2} via {activeInteractor.name}");
         }
     }
 

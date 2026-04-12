@@ -7,12 +7,14 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
 /// [ID] Menangani interaksi VR Scrollbar dengan fitur DRAG.
-/// Menggunakan logika sumbu X Lokal. Jika Scrollbar vertikal, putar GameObject Collider-nya 90 derajat.
+/// Mendukung DUA TANGAN. Menggunakan logika sumbu X Lokal. 
+/// Jika Scrollbar vertikal, putar GameObject Collider-nya 90 derajat.
 /// 
 /// [EN] Handles VR Scrollbar interaction with DRAG feature.
-/// Uses Local X-axis logic. If Scrollbar is vertical, rotate the Collider GameObject 90 degrees.
+/// Supports BOTH HANDS. Uses Local X-axis logic. 
+/// If Scrollbar is vertical, rotate the Collider GameObject 90 degrees.
 /// </summary>
-public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
+public class CurvedPhysicalUIScrollbarHandler : MonoBehaviour
 {
     [Header("Mapping Configuration")]
     [Tooltip("[ID] Box Collider sepanjang track Scrollbar.\n[EN] Box Collider along the Scrollbar track.")]
@@ -21,12 +23,19 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
     [Tooltip("[ID] UI Scrollbar di Canvas.\n[EN] UI Scrollbar on Canvas.")]
     public Scrollbar[] canvasScrollbars;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
 
-    [Header("Input Action")]
-    [SerializeField] private InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action untuk trigger/klik Kiri.\n[EN] Input Action for Left trigger/click.")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk trigger/klik Kanan.\n[EN] Input Action for Right trigger/click.")]
+    [SerializeField] private InputActionReference rightSelectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = false;
@@ -34,6 +43,10 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
     // State Variables
     private bool isDragging = false;
     private int activeIndex = -1;
+
+    // [ID] Menyimpan Interactor mana (kiri/kanan) yang sedang aktif melakukan drag
+    // [EN] Stores which Interactor (left/right) is currently dragging
+    private XRRayInteractor activeInteractor = null;
 
     private void Start()
     {
@@ -43,28 +56,49 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (selectAction != null)
+        // [ID] Daftarkan event Started (Ditekan) dan Canceled (Dilepas) untuk kedua tangan
+        // [EN] Register Started (Pressed) and Canceled (Released) events for both hands
+        if (leftSelectAction != null)
         {
-            selectAction.action.started += OnDragStarted;
-            selectAction.action.canceled += OnDragEnded;
+            leftSelectAction.action.started += OnLeftDragStarted;
+            leftSelectAction.action.canceled += OnLeftDragEnded;
+        }
+        if (rightSelectAction != null)
+        {
+            rightSelectAction.action.started += OnRightDragStarted;
+            rightSelectAction.action.canceled += OnRightDragEnded;
         }
     }
 
     private void OnDisable()
     {
-        if (selectAction != null)
+        // [ID] Lepaskan listener VR
+        // [EN] Remove VR listeners
+        if (leftSelectAction != null)
         {
-            selectAction.action.started -= OnDragStarted;
-            selectAction.action.canceled -= OnDragEnded;
+            leftSelectAction.action.started -= OnLeftDragStarted;
+            leftSelectAction.action.canceled -= OnLeftDragEnded;
+        }
+        if (rightSelectAction != null)
+        {
+            rightSelectAction.action.started -= OnRightDragStarted;
+            rightSelectAction.action.canceled -= OnRightDragEnded;
         }
     }
 
     // ============================================================
     // INPUT EVENTS
     // ============================================================
-    private void OnDragStarted(InputAction.CallbackContext ctx)
+    private void OnLeftDragStarted(InputAction.CallbackContext ctx) => TryStartDrag(leftRayInteractor);
+    private void OnRightDragStarted(InputAction.CallbackContext ctx) => TryStartDrag(rightRayInteractor);
+
+    private void TryStartDrag(XRRayInteractor interactor)
     {
-        if (rayInteractor != null && rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+        // [ID] Abaikan jika sedang melakukan drag dengan tangan yang lain
+        // [EN] Ignore if already dragging with the other hand
+        if (isDragging) return;
+
+        if (interactor != null && interactor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
         {
             int index = Array.IndexOf(scrollbarColliders, hit.collider);
 
@@ -72,15 +106,25 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
             {
                 isDragging = true;
                 activeIndex = index;
+                activeInteractor = interactor; // Simpan tangan yang aktif
                 UpdateScrollbarValue(hit.point); // Update instan saat klik pertama
             }
         }
     }
 
-    private void OnDragEnded(InputAction.CallbackContext ctx)
+    private void OnLeftDragEnded(InputAction.CallbackContext ctx) => TryEndDrag(leftRayInteractor);
+    private void OnRightDragEnded(InputAction.CallbackContext ctx) => TryEndDrag(rightRayInteractor);
+
+    private void TryEndDrag(XRRayInteractor interactor)
     {
-        isDragging = false;
-        activeIndex = -1;
+        // [ID] Hanya hentikan drag JIKA tangan yang dilepas adalah tangan yang sedang drag
+        // [EN] Only stop drag IF the released hand is the one currently dragging
+        if (isDragging && activeInteractor == interactor)
+        {
+            isDragging = false;
+            activeIndex = -1;
+            activeInteractor = null;
+        }
     }
 
     // ============================================================
@@ -88,9 +132,11 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
     // ============================================================
     private void Update()
     {
-        if (isDragging && activeIndex != -1 && rayInteractor != null)
+        // [ID] Gunakan activeInteractor untuk melacak posisi tangan yang benar
+        // [EN] Use activeInteractor to track the correct hand's position
+        if (isDragging && activeIndex != -1 && activeInteractor != null)
         {
-            if (rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
+            if (activeInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
             {
                 // [ID] Pastikan masih kena collider yang sama agar tidak lompat
                 // [EN] Ensure it still hits the same collider to prevent jumping
@@ -124,7 +170,7 @@ public class CurvedPhysicalUIScrollviewHandler : MonoBehaviour
             uiScrollbar.value = normalizedValue;
 
             if (showDebug)
-                Debug.Log($"[Scrollbar] Val: {normalizedValue:F2}");
+                Debug.Log($"[Scrollbar] Val: {normalizedValue:F2} via {activeInteractor.name}");
         }
     }
 

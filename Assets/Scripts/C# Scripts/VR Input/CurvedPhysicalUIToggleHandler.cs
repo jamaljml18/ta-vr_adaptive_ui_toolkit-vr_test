@@ -7,10 +7,10 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
 /// [ID] Menangani interaksi VR Toggle (Checkbox) menggunakan pendekatan "Physical Proxy".
-/// Memetakan Collider 3D fisik ke komponen Toggle UI Canvas.
+/// Memetakan Collider 3D fisik ke komponen Toggle UI Canvas untuk DUA TANGAN.
 /// 
 /// [EN] Handles VR Toggle (Checkbox) interaction using the "Physical Proxy" approach.
-/// Maps physical 3D Colliders to Canvas UI Toggle components.
+/// Maps physical 3D Colliders to Canvas UI Toggle components for BOTH HANDS.
 /// </summary>
 public class CurvedPhysicalUIToggleHandler : MonoBehaviour
 {
@@ -21,13 +21,19 @@ public class CurvedPhysicalUIToggleHandler : MonoBehaviour
     [Tooltip("[ID] Daftar Toggle UI yang sesuai dengan urutan Collider di atas.\n[EN] List of UI Toggles corresponding to the order of Colliders above.")]
     public Toggle[] canvasToggles;
 
-    [Header("VR Settings")]
-    [Tooltip("[ID] Referensi ke Ray Interactor.\n[EN] Reference to the Ray Interactor.")]
-    [SerializeField] private XRRayInteractor rayInteractor;
+    [Header("VR Settings - Interactors")]
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kiri.\n[EN] Reference to the Left Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor leftRayInteractor;
 
-    [Header("Input Action")]
-    [Tooltip("[ID] Input Action untuk trigger/klik.\n[EN] Input Action for trigger/click.")]
-    [SerializeField] private InputActionReference selectAction;
+    [Tooltip("[ID] Referensi ke Ray Interactor di tangan kanan.\n[EN] Reference to the Right Hand Ray Interactor.")]
+    [SerializeField] private XRRayInteractor rightRayInteractor;
+
+    [Header("VR Settings - Input Actions")]
+    [Tooltip("[ID] Input Action untuk trigger/klik Kiri (XRI LeftHand Interaction/Select).\n[EN] Input Action for Left trigger/click.")]
+    [SerializeField] private InputActionReference leftSelectAction;
+
+    [Tooltip("[ID] Input Action untuk trigger/klik Kanan (XRI RightHand Interaction/Select).\n[EN] Input Action for Right trigger/click.")]
+    [SerializeField] private InputActionReference rightSelectAction;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = true;
@@ -44,25 +50,45 @@ public class CurvedPhysicalUIToggleHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        // [ID] Aktifkan listener input VR ketika object aktif
-        // [EN] Enable VR input listener when this object becomes active
-        if (selectAction != null)
-            selectAction.action.started += OnTriggerPressed;
+        // [ID] Aktifkan listener input VR untuk kedua tangan ketika object aktif
+        // [EN] Enable VR input listeners for both hands when this object becomes active
+        if (leftSelectAction != null)
+            leftSelectAction.action.started += OnLeftTriggerPressed;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started += OnRightTriggerPressed;
     }
 
     private void OnDisable()
     {
         // [ID] Lepaskan listener VR untuk mencegah memory leak
-        // [EN] Remove VR listener to avoid memory leaks
-        if (selectAction != null)
-            selectAction.action.started -= OnTriggerPressed;
+        // [EN] Remove VR listeners to avoid memory leaks
+        if (leftSelectAction != null)
+            leftSelectAction.action.started -= OnLeftTriggerPressed;
+
+        if (rightSelectAction != null)
+            rightSelectAction.action.started -= OnRightTriggerPressed;
     }
 
-    private void OnTriggerPressed(InputAction.CallbackContext ctx)
+    // ==========================================
+    // LOGIC UTAMA / MAIN LOGIC
+    // ==========================================
+
+    private void OnLeftTriggerPressed(InputAction.CallbackContext ctx)
     {
-        if (rayInteractor != null)
+        if (leftRayInteractor != null)
         {
-            CheckAndToggle(rayInteractor);
+            if (showDebug) Debug.Log("[PhysicalToggle] Left hand trigger pressed.");
+            CheckAndToggle(leftRayInteractor);
+        }
+    }
+
+    private void OnRightTriggerPressed(InputAction.CallbackContext ctx)
+    {
+        if (rightRayInteractor != null)
+        {
+            if (showDebug) Debug.Log("[PhysicalToggle] Right hand trigger pressed.");
+            CheckAndToggle(rightRayInteractor);
         }
     }
 
@@ -79,7 +105,7 @@ public class CurvedPhysicalUIToggleHandler : MonoBehaviour
                 if (index < canvasToggles.Length && canvasToggles[index] != null)
                 {
                     if (showDebug)
-                        Debug.Log($"[PhysicalToggle] Hit Collider [{index}] -> Switching Toggle: '{canvasToggles[index].name}'");
+                        Debug.Log($"[PhysicalToggle] Hit Collider [{index}] via {interactor.name} -> Switching Toggle: '{canvasToggles[index].name}'");
 
                     // [ID] Ubah status Toggle (True jadi False, False jadi True)
                     // [EN] Flip the Toggle state (True to False, False to True)

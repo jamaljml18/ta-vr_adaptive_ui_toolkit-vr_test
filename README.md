@@ -11,12 +11,17 @@ Supports UI Canvas projection onto complex 3D meshes (e.g., curved displays crea
 - **Architecture:** Utilizes _Screen Space - Camera_ render mode with a dedicated UI Camera outputting to a _Render Texture_.
 - **Versatility:** Supports both script-generated setups and imported 3D mesh presets.
 
-### 2. Spatial Input Mapping (Physical Proxy)
+### 2. Spatial Input Mapping (Physical Proxy System)
 
-A physics-based interaction system that maps `BoxCollider` proxies to UI elements (Buttons, Toggles, Sliders, Scrollbars). This ensures precise raycast detection regardless of the visual mesh curvature or texture resolution.
+A physics-based interaction system that maps `BoxCollider` proxies to UI elements. This ensures precise raycast detection regardless of the visual mesh curvature or texture resolution. The toolkit includes a complete suite of dedicated handlers for every major UI component, all featuring **independent Dual-Wielding support** (simultaneous Left and Right hand interaction):
+
+- **Buttons & Toggles:** Direct 1-to-1 proxy mapping for instant clicks and checkbox state switching (`CurvedPhysicalUIButtonHandler`, `CurvedPhysicalUIToggleHandler`).
+- **Sliders & Scrollbars (Drag Support):** Continuous real-time tracking for "press, hold, and drag" interactions using precise Local X-Axis calculations (`CurvedPhysicalUISliderDragHandler`, `CurvedPhysicalUIScrollbarHandler`, `CurvedPhysicalUIScrollviewHandler`).
+- **Dropdowns:** A highly optimized two-collider system (Header and List) that uses Y-Axis inverse transform math to select items from dynamic templates—eliminating the need for individual colliders per option (`CurvedPhysicalUIDropdownHandler`).
+- **Input Fields & Custom 3D Keyboard:** Safely bypasses disruptive native OS keyboards (e.g., Meta/Pico system keyboards) by using a proxy to summon a fully functional, physical 3D VR Keyboard featuring Shift/Caps logic, multi-line support, and caret management (`CurvedPhysicalUIInputFieldHandler`, `KeyboardInputFieldManager`).
 
 **Slider & Scrollbar Orientation Guide:**
-The system calculates values based on the Collider's **Local X-Axis**. To define the sliding direction, apply the following rotations to the Collider GameObject:
+The continuous tracking handlers calculate values based on the Collider's **Local X-Axis**. To define the sliding direction, apply the following rotations to the Collider GameObject:
 
 | Slide Direction             | Rotation (x, y, z) | Description         |
 | :-------------------------- | :----------------: | :------------------ |
@@ -25,7 +30,7 @@ The system calculates values based on the Collider's **Local X-Axis**. To define
 | **Bottom to Top**           |    `(0, 0, 90)`    | Standard Vertical   |
 | **Top to Bottom**           |   `(0, 0, -90)`    | Inverted Vertical   |
 
-> **Note:** Ensure the Collider's `Size X` matches the length of the UI track.
+> **Note:** Ensure the Collider's `Size X` matches the visual length of the UI track. The scripts use this Size X to map the 0 to 1 values.
 
 ### 3. Smooth Adaptive Follow
 

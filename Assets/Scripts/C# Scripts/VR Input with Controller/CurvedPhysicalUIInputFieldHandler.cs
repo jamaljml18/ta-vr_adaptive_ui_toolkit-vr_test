@@ -12,9 +12,6 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class CurvedPhysicalUIInputFieldHandler : MonoBehaviour
 {
-    // ==========================================
-    // REFERENSI / REFERENCES
-    // ==========================================
     [Header("References")]
     [Tooltip("[ID] Komponen TMP_InputField target.\n[EN] The target TMP_InputField component.")]
     public TMP_InputField inputField;

@@ -1,5 +1,15 @@
 {
   "dependencies": {
+    "com.jamal.vrspatialadaptiveuitoolkit": {
+      "version": "file:com.jamal.vrspatialadaptiveuitoolkit",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.xr.interaction.toolkit": "3.3.0",
+        "com.unity.inputsystem": "1.16.0",
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
@@ -8,6 +18,14 @@
         "com.unity.modules.ai": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.asset-store-tools": {
+      "version": "file:com.unity.asset-store-tools",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
     },
     "com.unity.burst": {
       "version": "1.8.25",
@@ -90,6 +108,13 @@
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.6",
       "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

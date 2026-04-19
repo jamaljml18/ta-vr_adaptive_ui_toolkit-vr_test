@@ -1,0 +1,19 @@
+{
+  "name": "com.jamal.vrspatialadaptiveuitoolkit",
+  "version": "1.0.0",
+  "displayName": "VR Spatial-Adaptive UI Toolkit",
+  "description": "A comprehensive VR UI solution for projecting dynamic interfaces onto complex 3D surfaces with precise physics-based input detection, hand-tracking support, and adaptive follow behaviors.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.xr.interaction.toolkit": "3.3.0",
+    "com.unity.inputsystem": "1.16.0",
+    "com.unity.ugui": "2.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Demo Scene & Prefabs",
+      "description": "Includes example scenes demonstrating the physical proxy system for buttons, 3D keyboard, sliders, and auto-recenter features.",
+      "path": "Samples~/Demo Scene"
+    }
+  ]
+}

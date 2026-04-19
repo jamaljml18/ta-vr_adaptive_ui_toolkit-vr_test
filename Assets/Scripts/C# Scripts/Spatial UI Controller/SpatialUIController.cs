@@ -53,7 +53,7 @@ public class SpatialUIController : MonoBehaviour
         "Optional, can be left blank, button will be used to ensure the UI is in front of the user's view.")]
     [SerializeField] private InputActionReference recenterUIInput;
 
-    [SerializeField] private InputActionReference debugInput;
+    //[SerializeField] private InputActionReference debugInput;
 
 
     // [ID] Velocity digunakan untuk SmoothDamp
@@ -67,7 +67,7 @@ public class SpatialUIController : MonoBehaviour
         displaysUIInput.action.started += DisplaysUIInputPressed;
         hideUIInput.action.started += HideUIInputPressed;
         recenterUIInput.action.started += RecenterUIInputPressed;
-        debugInput.action.started += DebugInputPressed;
+        //debugInput.action.started += DebugInputPressed;
 
     }
 
@@ -78,7 +78,7 @@ public class SpatialUIController : MonoBehaviour
         displaysUIInput.action.started -= DisplaysUIInputPressed;
         hideUIInput.action.started -= HideUIInputPressed;
         recenterUIInput.action.started -= RecenterUIInputPressed;
-        debugInput.action.started -= DebugInputPressed;
+        //debugInput.action.started -= DebugInputPressed;
 
     }
 
@@ -157,17 +157,17 @@ public class SpatialUIController : MonoBehaviour
         RecenterUI();
     }
 
-    private void DebugInputPressed(InputAction.CallbackContext ctx)
-    {
-        // [ID] Dipanggil saat DebugInputPressed ditekan
-        // [EN] Called when DebugInputPressed is pressed
+    //private void DebugInputPressed(InputAction.CallbackContext ctx)
+    //{
+    //    // [ID] Dipanggil saat DebugInputPressed ditekan
+    //    // [EN] Called when DebugInputPressed is pressed
 
-        Debug.Log("VR INPUT TRIGGERED! Change");
+    //    Debug.Log("VR INPUT TRIGGERED! Change");
 
-        // [ID] Mengubah followX, followY, dan followZ
-        // [EN] Change followX, followY, and followZ
-        ChangeFollowXYZ();
-    }
+    //    // [ID] Mengubah followX, followY, dan followZ
+    //    // [EN] Change followX, followY, and followZ
+    //    ChangeFollowXYZ();
+    //}
     private void DisplayUI()
     {
         // [ID] Jika UI sedang mengikuti posisi kamera pada sumbu tertentu,
@@ -253,13 +253,13 @@ public class SpatialUIController : MonoBehaviour
 
     // [ID] Fungsi ChangeFollowXYZ() hanya digunakan untuk melakukan debugging.
     // [EN] The ChangeFollowXYZ() function is only used for debugging.
-    private void ChangeFollowXYZ()
-    {
-        alwaysFaceCamera = !alwaysFaceCamera;
-        followX = !followX;
-        followY = !followY;
-        followZ = !followZ;
-    }
+    //private void ChangeFollowXYZ()
+    //{
+    //    alwaysFaceCamera = !alwaysFaceCamera;
+    //    followX = !followX;
+    //    followY = !followY;
+    //    followZ = !followZ;
+    //}
 
     private void LateUpdate()
     {

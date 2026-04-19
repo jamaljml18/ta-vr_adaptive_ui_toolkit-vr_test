@@ -1,15 +1,5 @@
 {
   "dependencies": {
-    "com.jamal.vrspatialadaptiveuitoolkit": {
-      "version": "file:com.jamal.vrspatialadaptiveuitoolkit",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.xr.interaction.toolkit": "3.3.0",
-        "com.unity.inputsystem": "1.16.0",
-        "com.unity.ugui": "2.0.0"
-      }
-    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,

@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Samples/VR Spatial-Adaptive UI Toolkit/1.0.0/Demo Scene & Prefabs/Scenes/Example
+  - enabled: 0
+    path: Assets/com.jamal.vrspatialadaptiveuitoolkit/Demo Scene & Prefabs/Scenes/Example
       Scene with Hand Tracking.unity
     guid: 166b8228f1544e34596ad785a10ae0cd
-  - enabled: 0
-    path: Assets/Samples/VR Spatial-Adaptive UI Toolkit/1.0.0/Demo Scene & Prefabs/Scenes/Example
+  - enabled: 1
+    path: Assets/com.jamal.vrspatialadaptiveuitoolkit/Demo Scene & Prefabs/Scenes/Example
       Scene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:

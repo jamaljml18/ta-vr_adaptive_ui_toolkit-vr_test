@@ -209,9 +209,9 @@ namespace Jamal.VRSpatialAdaptiveUIToolkit
             // [ID] Paksa UI untuk menghadap kamera dan mengikuti posisi kamera
             // [EN] Force UI to face the camera and follow camera position
             alwaysFaceCamera = true;
-            followX = true;
-            followY = true;
-            followZ = true;
+            //followX = true;
+            //followY = true;
+            //followZ = true;
 
             // [ID] Snap posisi secara instan ke depan kamera
             // [EN] Instantly snap position to the front of the camera

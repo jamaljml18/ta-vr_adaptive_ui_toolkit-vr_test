@@ -1,0 +1,447 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1710171739130024374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6154377134302664628}
+  - component: {fileID: 4510060059045382591}
+  - component: {fileID: 7458191524900352734}
+  - component: {fileID: 3855536306443973865}
+  - component: {fileID: 4420946570681129804}
+  - component: {fileID: 2681966368378747841}
+  - component: {fileID: 2390392023010294771}
+  - component: {fileID: 3042816743752543041}
+  - component: {fileID: 3824249015899387973}
+  - component: {fileID: 2710663098889515883}
+  - component: {fileID: 3248467457418299847}
+  m_Layer: 0
+  m_Name: 'Scripts [Script]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6154377134302664628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4510060059045382591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3c7fc1bb0da704c9298d25b0a58cd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestButtons
+  cubeDebug: {fileID: 0}
+--- !u!114 &7458191524900352734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e1aab7b837c28f4383ed77b944dcabb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIButtonHandlerHT
+  buttonBoxColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  leftSelectAction: {fileID: 0}
+  rightSelectAction: {fileID: 0}
+  showDebug: 1
+--- !u!114 &3855536306443973865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f357f02de547aaa4ea041175379800e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIToggleHandlerHT
+  toggleBoxColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasToggles:
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  leftSelectAction: {fileID: 0}
+  rightSelectAction: {fileID: 0}
+  showDebug: 1
+--- !u!114 &4420946570681129804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00cb0e8fba529e4990853cb8163d2f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIScrollbarHandlerHT
+  scrollbarColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasScrollbars:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  showDebug: 0
+--- !u!114 &2681966368378747841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8241bf01386529d44939986651dc5bc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUISliderDragHandlerHT
+  sliderColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasSliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  showDebug: 0
+--- !u!114 &2390392023010294771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfbbb982e6bcf0d4188807464efe5d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIScrollviewHandlerHT
+  scrollbarColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasScrollbars:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  showDebug: 0
+--- !u!114 &3042816743752543041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfbbb982e6bcf0d4188807464efe5d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIScrollviewHandlerHT
+  scrollbarColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  canvasScrollbars:
+  - {fileID: 0}
+  - {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  showDebug: 0
+--- !u!114 &3824249015899387973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bb83968e7f7d5447807cde768bfb198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIDropdownHandlerHT
+  dropdown: {fileID: 0}
+  headerCollider: {fileID: 0}
+  listCollider: {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  leftSelectAction: {fileID: 0}
+  rightSelectAction: {fileID: 0}
+  showDebug: 0
+--- !u!114 &2710663098889515883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a64099fab3898340aff89dfada46881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurvedPhysicalUIInputFieldHandlerHT
+  inputField: {fileID: 0}
+  inputCollider: {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  leftSelectAction: {fileID: 0}
+  rightSelectAction: {fileID: 0}
+  customKeyboardManager: {fileID: 3248467457418299847}
+--- !u!114 &3248467457418299847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710171739130024374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdaac03e7b459743adbf5b0805769dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeyboardInputFieldManagerHT
+  keyboardVisualContainer: {fileID: 0}
+  leftRayInteractor: {fileID: 0}
+  rightRayInteractor: {fileID: 0}
+  leftSelectAction: {fileID: 0}
+  rightSelectAction: {fileID: 0}
+  keyboardKeys:
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: a
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: b
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: c
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: d
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: e
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: f
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: g
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: h
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: i
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: j
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: k
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: l
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: m
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: n
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: o
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: p
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: q
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: r
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: s
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: t
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: u
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: v
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: w
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: x
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: y
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: z
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 1
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 2
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 3
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 4
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 5
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 6
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 7
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 8
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 9
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: 0
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: '`'
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: '-'
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: =
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: '['
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: ']'
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: ;
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: ''''
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: ','
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: .
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: /
+  - keyCollider: {fileID: 0}
+    function: 0
+    characterValue: \
+  - keyCollider: {fileID: 0}
+    function: 11
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 9
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 12
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 10
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 5
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 6
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 2
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 4
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 1
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 7
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 7
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 14
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 14
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 13
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 13
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 8
+    characterValue: 
+  - keyCollider: {fileID: 0}
+    function: 3
+    characterValue: 

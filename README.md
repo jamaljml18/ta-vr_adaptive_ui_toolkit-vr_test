@@ -6,7 +6,7 @@
 
 ### 1. Advanced Render Texture & Mesh Support
 
-Supports UI Canvas projection onto complex 3D meshes (e.g., curved displays created in Blender).
+Supports UI Canvas projection onto complex 3D meshes.
 
 - **Architecture:** Utilizes _Screen Space - Camera_ render mode with a dedicated UI Camera outputting to a _Render Texture_.
 - **Versatility:** Supports both script-generated setups and imported 3D mesh presets.
